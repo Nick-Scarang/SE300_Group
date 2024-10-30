@@ -15,17 +15,17 @@ class UserSetup {
         const userSetupHTML = `
             <div id="userSetupContainer">
                 <h2>User Setup</h2>
-                <input type="text" id="inputField" placeholder="Enter text here" />
-                <input type="text" id="confirmField" placeholder="Previous entry" readonly />
+                <input type="text" id="inputField" placeholder="Enter canvas API access token..." />
+                <input type="text" id="savedField" placeholder="Previous entry" readonly />
                 <button id="saveButton">Save</button>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', userSetupHTML);
 
-        // Load saved data to display in the confirm field
+        // Load saved data to display in the saved field
         chrome.storage.local.get(['outputText'], (result) => {
             if (result.outputText) {
-                document.getElementById('confirmField').value = result.outputText;
+                document.getElementById('savedField').value = result.outputText;
             }
         });
 

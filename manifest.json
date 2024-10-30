@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Text Field Copier",
+  "name": "UI",
   "version": "1.0",
-  "description": "Copies data from one text field to another.",
+  "description": "Controls the full UI.",
   "permissions": [
     "activeTab",
     "storage"
