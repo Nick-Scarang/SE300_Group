@@ -4,9 +4,16 @@
   "version": "1.0",
   "description": "Controls the full UI.",
   "permissions": [
+    "storage",
     "activeTab",
-    "storage"
+    "scripting",
+    "tabs",
+    "identity",
+    "indentity.email"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["https://*.erau.instructure.com/*"],
@@ -14,6 +21,7 @@
         "js/UserSetup.js",
         "js/MainMenu.js",
         "js/Graphics.js",
+        "js/CanvasInterface.js",
         "js/Master.js"
       ],
       "css": ["css/styles.css"],

@@ -1,2 +1,3 @@
 // Instantiate Graphics when the script is loaded
-const graphics = new Graphics();
+const UI = new UserInterface();
+const CI = new CanvasInterface();

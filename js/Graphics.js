@@ -1,4 +1,4 @@
-class Graphics {
+class UserInterface {
     constructor() {
         this.loadSavedData();
     }
