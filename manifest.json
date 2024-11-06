@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Text Field Copier",
+  "version": "1.0",
+  "description": "Copies data from one text field to another.",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.erau.instructure.com/*"],
+      "js": [
+        "js/UserSetup.js",
+        "js/MainMenu.js",
+        "js/Graphics.js",
+        "js/Master.js"
+      ],
+      "css": ["css/styles.css"],
+      "run_at": "document_end"
+    }
+  ]
+}
