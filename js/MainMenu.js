@@ -1,6 +1,6 @@
 class MainMenu {
-    constructor(outputText, onEdit) {
-        this.outputText = outputText;
+    constructor(accessToken, onEdit) {
+        this.accessToken = accessToken;
         this.onEdit = onEdit;
         this.render();
     }
@@ -16,7 +16,7 @@ class MainMenu {
         const mainMenuHTML = `
             <div id="mainMenuContainer">
                 <h2>Main Menu</h2>
-                <p id="savedText">${this.outputText}</p>
+                <p id="savedText">${this.accessToken}</p>
                 <button id="editButton">Edit</button>
             </div>
         `;

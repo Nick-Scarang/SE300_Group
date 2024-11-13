@@ -20,7 +20,7 @@
       "js": [
         "js/UserSetup.js",
         "js/MainMenu.js",
-        "js/Graphics.js",
+        "js/UserInterface.js",
         "js/CanvasInterface.js",
         "js/Master.js"
       ],

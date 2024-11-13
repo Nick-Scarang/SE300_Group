@@ -1,5 +1,7 @@
 class UserSetup {
-    constructor(onSave) {
+    CI;
+    constructor(onSave, CI) {
+        this.CI = CI;
         this.onSave = onSave;
         this.render();
     }
@@ -23,9 +25,9 @@ class UserSetup {
         document.body.insertAdjacentHTML('beforeend', userSetupHTML);
 
         // Load saved data to display in the saved field
-        chrome.storage.local.get(['outputText'], (result) => {
-            if (result.outputText) {
-                document.getElementById('savedField').value = result.outputText;
+        chrome.storage.local.get(['accessToken'], (result) => {
+            if (result.accessToken) {
+                document.getElementById('savedField').value = result.accessToken;
             }
         });
 
@@ -38,10 +40,11 @@ class UserSetup {
 
         if (inputText) {
             // Save the data to chrome.storage
-            chrome.storage.local.set({ outputText: inputText }, () => {
+            chrome.storage.local.set({ accessToken: inputText }, () => {
                 // Call the onSave callback to switch to MainMenu
                 this.onSave(inputText);
             });
+            CI.fetchCourses();
         } else {
             alert("Please enter a value.");
         }

@@ -1,12 +1,15 @@
 class UserInterface {
-    constructor() {
+    CI;
+    constructor(CI) {
+        this.CI = CI;
         this.loadSavedData();
+
     }
 
     loadSavedData() {
-        chrome.storage.local.get(['outputText'], (result) => {
-            if (result.outputText) {
-                this.showMainMenu(result.outputText);
+        chrome.storage.local.get(['accessToken'], (result) => {
+            if (result.accessToken) {
+                this.showMainMenu(result.accessToken);
             } else {
                 this.showUserSetup();
             }
@@ -18,7 +21,7 @@ class UserInterface {
         this.clearExistingUI();
 
         new UserSetup((inputText) => {
-            this.showMainMenu(inputText);
+            this.showMainMenu(inputText, CI);
         });
     }
 
@@ -27,7 +30,7 @@ class UserInterface {
         this.clearExistingUI();
 
         new MainMenu(outputText, () => {
-            this.showUserSetup();
+            this.showUserSetup(CI);
         });
     }
 
@@ -42,4 +45,5 @@ class UserInterface {
             existingMainMenu.remove();
         }
     }
+
 }
