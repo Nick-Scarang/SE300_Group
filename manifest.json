@@ -10,9 +10,6 @@
     "tabs",
     "identity"
   ],
-  "background": {
-    "service_worker": "js/background.js"
-  },
   "content_scripts": [
     {
       "matches": ["https://*.erau.instructure.com/*"],
