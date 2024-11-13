@@ -1,8 +1,9 @@
 class UserSetup {
     CI;
-    constructor(onSave, CI) {
+    accessToken;
+    constructor(CI, userInterface) {
         this.CI = CI;
-        this.onSave = onSave;
+        this.userInterface = userInterface;
         this.render();
     }
 
@@ -41,10 +42,12 @@ class UserSetup {
         if (inputText) {
             // Save the data to chrome.storage
             chrome.storage.local.set({ accessToken: inputText }, () => {
-                // Call the onSave callback to switch to MainMenu
-                this.onSave(inputText);
+                this.accessToken = inputText;
+                // Switch to MainMenu after saving
+                this.userInterface.showMainMenu();
+                // Optionally, trigger any further actions after saving the token
+                this.CI.fetchCourses();
             });
-            CI.fetchCourses();
         } else {
             alert("Please enter a value.");
         }

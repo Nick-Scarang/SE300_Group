@@ -8,8 +8,7 @@
     "activeTab",
     "scripting",
     "tabs",
-    "identity",
-    "indentity.email"
+    "identity"
   ],
   "background": {
     "service_worker": "js/background.js"

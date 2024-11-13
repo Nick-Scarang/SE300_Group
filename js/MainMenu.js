@@ -1,7 +1,10 @@
 class MainMenu {
-    constructor(accessToken, onEdit) {
+    accessToken;
+    CI;
+    constructor(CI, accessToken, userInterface) {
         this.accessToken = accessToken;
-        this.onEdit = onEdit;
+        this.CI = CI;
+        this.userInterface = userInterface
         this.render();
     }
 
@@ -23,6 +26,9 @@ class MainMenu {
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
 
         // Add event listener for the edit button
-        document.getElementById('editButton').addEventListener('click', () => this.onEdit());
+        document.getElementById('editButton').addEventListener('click', () => {
+            // On edit button click, go to user setup without causing a loop
+            this.userInterface.showUserSetup();
+        });
     }
 }
