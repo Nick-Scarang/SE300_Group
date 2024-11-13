@@ -1,9 +1,9 @@
 class MainMenu {
     accessToken;
-    CI;
-    constructor(CI, accessToken, userInterface) {
+    Master;
+    constructor(Master, accessToken, userInterface) {
         this.accessToken = accessToken;
-        this.CI = CI;
+        this.Master = Master;
         this.userInterface = userInterface
         this.render();
     }
