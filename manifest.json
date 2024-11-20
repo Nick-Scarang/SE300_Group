@@ -1,19 +1,23 @@
 {
   "manifest_version": 3,
-  "name": "Text Field Copier",
+  "name": "UI",
   "version": "1.0",
-  "description": "Copies data from one text field to another.",
+  "description": "Controls the full UI.",
   "permissions": [
+    "storage",
     "activeTab",
-    "storage"
+    "scripting",
+    "tabs",
+    "identity"
   ],
   "content_scripts": [
     {
       "matches": ["https://*.erau.instructure.com/*"],
       "js": [
-        "js/UserSetup.js",
-        "js/MainMenu.js",
-        "js/Graphics.js",
+        "js/Scenes/UserSetup.js",
+        "js/Scenes/MainMenu.js",
+        "js/Interfaces/UserInterface.js",
+        "js/Interfaces/CanvasInterface.js",
         "js/Master.js"
       ],
       "css": ["css/styles.css"],

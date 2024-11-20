@@ -1,14 +1,18 @@
-class Graphics {
-    constructor() {
+class UserInterface {
+    Master;
+    accessToken;
+    constructor(Master) {
+        this.Master = Master;
         this.loadSavedData();
     }
 
     loadSavedData() {
-        chrome.storage.local.get(['outputText'], (result) => {
-            if (result.outputText) {
-                this.showMainMenu(result.outputText);
+        chrome.storage.local.get(['accessToken'], (result) => {
+            if (result.accessToken) {
+                this.accessToken = result.accessToken;
+                this.showMainMenu(result.accessToken);  // Show Main Menu
             } else {
-                this.showUserSetup();
+                this.showUserSetup();  // Show Setup if no token exists
             }
         });
     }
@@ -16,19 +20,15 @@ class Graphics {
     showUserSetup() {
         // Clear any existing UI
         this.clearExistingUI();
-
-        new UserSetup((inputText) => {
-            this.showMainMenu(inputText);
-        });
+        // Create UserSetup UI without passing showMainMenu directly
+        new UserSetup(this.Master, this);
     }
 
-    showMainMenu(outputText) {
+    showMainMenu() {
         // Clear any existing UI
         this.clearExistingUI();
-
-        new MainMenu(outputText, () => {
-            this.showUserSetup();
-        });
+        // Create MainMenu UI
+        new MainMenu(this.Master, this.accessToken, this);
     }
 
     clearExistingUI() {

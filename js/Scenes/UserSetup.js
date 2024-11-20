@@ -1,6 +1,9 @@
 class UserSetup {
-    constructor(onSave) {
-        this.onSave = onSave;
+    Master;
+    accessToken;
+    constructor(Master, userInterface) {
+        this.Master = Master;
+        this.userInterface = userInterface;
         this.render();
     }
 
@@ -15,17 +18,17 @@ class UserSetup {
         const userSetupHTML = `
             <div id="userSetupContainer">
                 <h2>User Setup</h2>
-                <input type="text" id="inputField" placeholder="Enter text here" />
-                <input type="text" id="confirmField" placeholder="Previous entry" readonly />
+                <input type="text" id="inputField" placeholder="Enter canvas API access token..." />
+                <input type="text" id="savedField" placeholder="Previous entry" readonly />
                 <button id="saveButton">Save</button>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', userSetupHTML);
 
-        // Load saved data to display in the confirm field
-        chrome.storage.local.get(['outputText'], (result) => {
-            if (result.outputText) {
-                document.getElementById('confirmField').value = result.outputText;
+        // Load saved data to display in the saved field
+        chrome.storage.local.get(['accessToken'], (result) => {
+            if (result.accessToken) {
+                document.getElementById('savedField').value = result.accessToken;
             }
         });
 
@@ -38,9 +41,12 @@ class UserSetup {
 
         if (inputText) {
             // Save the data to chrome.storage
-            chrome.storage.local.set({ outputText: inputText }, () => {
-                // Call the onSave callback to switch to MainMenu
-                this.onSave(inputText);
+            chrome.storage.local.set({ accessToken: inputText }, () => {
+                this.accessToken = inputText;
+                // Switch to MainMenu after saving
+                this.userInterface.showMainMenu();
+                // Optionally, trigger any further actions after saving the token
+                this.Master.getCanvasInterface().fetchCourses();
             });
         } else {
             alert("Please enter a value.");

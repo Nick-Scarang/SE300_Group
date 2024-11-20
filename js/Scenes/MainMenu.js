@@ -1,7 +1,10 @@
 class MainMenu {
-    constructor(outputText, onEdit) {
-        this.outputText = outputText;
-        this.onEdit = onEdit;
+    accessToken;
+    Master;
+    constructor(Master, accessToken, userInterface) {
+        this.accessToken = accessToken;
+        this.Master = Master;
+        this.userInterface = userInterface
         this.render();
     }
 
@@ -16,13 +19,16 @@ class MainMenu {
         const mainMenuHTML = `
             <div id="mainMenuContainer">
                 <h2>Main Menu</h2>
-                <p id="savedText">${this.outputText}</p>
+                <p id="savedText">${this.accessToken}</p>
                 <button id="editButton">Edit</button>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
 
         // Add event listener for the edit button
-        document.getElementById('editButton').addEventListener('click', () => this.onEdit());
+        document.getElementById('editButton').addEventListener('click', () => {
+            // On edit button click, go to user setup without causing a loop
+            this.userInterface.showUserSetup();
+        });
     }
 }
