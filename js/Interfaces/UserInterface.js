@@ -1,8 +1,8 @@
 class UserInterface {
-    CI;
+    Master;
     accessToken;
-    constructor(CI) {
-        this.CI = CI;
+    constructor(Master) {
+        this.Master = Master;
         this.loadSavedData();
     }
 
@@ -21,14 +21,14 @@ class UserInterface {
         // Clear any existing UI
         this.clearExistingUI();
         // Create UserSetup UI without passing showMainMenu directly
-        new UserSetup(this.CI, this);
+        new UserSetup(this.Master, this);
     }
 
     showMainMenu() {
         // Clear any existing UI
         this.clearExistingUI();
         // Create MainMenu UI
-        new MainMenu(this.CI, this.accessToken, this);
+        new MainMenu(this.Master, this.accessToken, this);
     }
 
     clearExistingUI() {

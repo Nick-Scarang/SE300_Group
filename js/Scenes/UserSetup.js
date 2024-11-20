@@ -1,8 +1,8 @@
 class UserSetup {
-    CI;
+    Master;
     accessToken;
-    constructor(CI, userInterface) {
-        this.CI = CI;
+    constructor(Master, userInterface) {
+        this.Master = Master;
         this.userInterface = userInterface;
         this.render();
     }
@@ -46,7 +46,7 @@ class UserSetup {
                 // Switch to MainMenu after saving
                 this.userInterface.showMainMenu();
                 // Optionally, trigger any further actions after saving the token
-                this.CI.fetchCourses();
+                this.Master.getCanvasInterface().fetchCourses();
             });
         } else {
             alert("Please enter a value.");

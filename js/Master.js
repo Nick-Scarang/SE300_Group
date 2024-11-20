@@ -13,9 +13,20 @@ class Master {
     }
 
     // Example method to initialize the application
+    CI;
+    UI;
     initialize() {
-        const CI = new CanvasInterface();
-        const UI = new UserInterface(CI);
+        this.CI = new CanvasInterface();
+        this.UI = new UserInterface(this);
+    }
+    checkToken(){
+
+    }
+    updateDatabases(){
+
+    }
+    getCanvasInterface(){
+        return this.CI;
     }
 }
 
