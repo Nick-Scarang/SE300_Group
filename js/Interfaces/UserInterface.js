@@ -31,6 +31,12 @@ class UserInterface {
         new MainMenu(this.Master, this.accessToken, this);
     }
 
+    showSyllabusUpload() {
+        this.clearExistingUI();
+        new SyllabusUpload(this.Master, this);
+    }
+
+
     clearExistingUI() {
         const existingUserSetup = document.getElementById('userSetupContainer');
         if (existingUserSetup) {

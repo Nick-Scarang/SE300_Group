@@ -19,13 +19,16 @@ class Master {
         this.CI = new CanvasInterface();
         this.UI = new UserInterface(this);
     }
-    checkToken(){
 
+    checkToken() {
+        // Implement any logic you need for checking the token
     }
-    updateDatabases(){
 
+    updateDatabases() {
+        // Implement logic to update the databases if necessary
     }
-    getCanvasInterface(){
+
+    getCanvasInterface() {
         return this.CI;
     }
 }

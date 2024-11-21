@@ -4,7 +4,7 @@ class MainMenu {
     constructor(Master, accessToken, userInterface) {
         this.accessToken = accessToken;
         this.Master = Master;
-        this.userInterface = userInterface
+        this.userInterface = userInterface;
         this.render();
     }
 
@@ -16,11 +16,12 @@ class MainMenu {
         }
 
         // Create elements
-        const mainMenuHTML = `
+        const mainMenuHTML = ` 
             <div id="mainMenuContainer">
                 <h2>Main Menu</h2>
                 <p id="savedText">${this.accessToken}</p>
                 <button id="editButton">Edit</button>
+                <button id="UploadSyllabus">Upload Syllabi</button>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
@@ -31,12 +32,11 @@ class MainMenu {
             this.userInterface.showUserSetup();
         });
 
+        document.getElementById('UploadSyllabus').addEventListener('click', () => {
+            this.userInterface.showSyllabusUpload();
+        });
+
+
+
     }
-
-
-
-
-
-
-
 }

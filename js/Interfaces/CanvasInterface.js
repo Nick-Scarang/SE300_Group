@@ -18,6 +18,7 @@ class CanvasInterface {
             // Set the access token to the class property
             this.accessToken = data.accessToken;
             console.log("Access Token:", this.accessToken);  // Log the access token
+
             // Make the API request using the retrieved token
             try {
                 const response = await fetch(`${this.canvasUrl}/api/v1/courses`, {
