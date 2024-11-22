@@ -1,13 +1,11 @@
 class SyllabusUpload {
     constructor(Master, userInterface) {
-        console.log("This is shit");
         this.Master = Master;
         this.userInterface = userInterface;
         this.render();
     }
 
     render() {
-        console.log("I hate life");
         // Clear any existing syllabus upload container if exists
         const existingContainer = document.getElementById('syllabusUploadContainer');
         if (existingContainer) {
@@ -20,13 +18,14 @@ class SyllabusUpload {
                 <h2>Upload Syllabus</h2>
                 <input type="file" id="fileInput" accept="image/*" />
                 <button id="processButton">Process Syllabus</button>
+                <div id="output"></div>
+                <div id="assignments"></div>
             </div>
         `;
-        console.log("Im going to jump off a bridge");
+        
         // Insert the HTML into the document body
         document.body.insertAdjacentHTML('beforeend', syllabusUploadHTML);
 
-    
         // Set up event listener for the process button
         document.getElementById('processButton').addEventListener('click', async () => {
             const fileInput = document.getElementById('fileInput');

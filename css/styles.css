@@ -27,7 +27,7 @@ button:hover {
     background-color: #0056b3;
 }
 
-#userSetupContainer, #mainMenuContainer {
+#userSetupContainer, #mainMenuContainer, #syllabusUploadContainer {
     position: fixed;
     top: 10px;
     right: 10px;

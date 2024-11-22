@@ -17,14 +17,14 @@ class MainMenu {
             existingContainer.remove();
         }
 
-        const mainMenuHTML = `
-            <div id="mainMenuContainer">
+        const mainMenuHTML = 
+            `<div id="mainMenuContainer">
                 <h2>Main Menu</h2>
                 <p id="savedText">${this.accessToken}</p>
                 <button id="editButton">Edit</button>
                 <button id="UploadSyllabus">Upload Syllabi</button>
-            </div>
-        `;
+            </div>`;
+
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
 
         // Edit button event listener
