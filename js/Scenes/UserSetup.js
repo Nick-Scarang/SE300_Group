@@ -1,20 +1,20 @@
 class UserSetup {
     Master;
     accessToken;
+
     constructor(Master, userInterface) {
         this.Master = Master;
         this.userInterface = userInterface;
         this.render();
     }
 
+    // Render the user setup UI
     render() {
-        // Clear previous content
         const existingContainer = document.getElementById('userSetupContainer');
         if (existingContainer) {
             existingContainer.remove();
         }
 
-        // Create elements
         const userSetupHTML = `
             <div id="userSetupContainer">
                 <h2>User Setup</h2>
@@ -32,10 +32,11 @@ class UserSetup {
             }
         });
 
-        // Add event listener for the save button
+        // Save button event listener
         document.getElementById('saveButton').addEventListener('click', () => this.saveData());
     }
 
+    // Save the API access token
     saveData() {
         const inputText = document.getElementById('inputField').value;
 
@@ -43,10 +44,8 @@ class UserSetup {
             // Save the data to chrome.storage
             chrome.storage.local.set({ accessToken: inputText }, () => {
                 this.accessToken = inputText;
-                // Switch to MainMenu after saving
-                this.userInterface.showMainMenu();
-                // Optionally, trigger any further actions after saving the token
-                this.Master.getCanvasInterface().fetchCourses();
+                this.userInterface.showMainMenu();  // Show the main menu after saving
+                this.Master.getCanvasInterface().fetchCourses();  // Fetch courses using the saved token
             });
         } else {
             alert("Please enter a value.");

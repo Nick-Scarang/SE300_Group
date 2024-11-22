@@ -1,35 +1,38 @@
-class SyllabusUpload{
-    Master;
-    constructor(Master, userInterface){
+class SyllabusUpload {
+    constructor(Master, userInterface) {
+        console.log("This is shit");
         this.Master = Master;
         this.userInterface = userInterface;
         this.render();
     }
 
-    render(){
+    render() {
+        console.log("I hate life");
+        // Clear any existing syllabus upload container if exists
         const existingContainer = document.getElementById('syllabusUploadContainer');
-        
-        if(existingContainer){
+        if (existingContainer) {
             existingContainer.remove();
         }
 
+        // Create the HTML structure for the syllabus upload UI
         const syllabusUploadHTML = `
             <div id="syllabusUploadContainer">
                 <h2>Upload Syllabus</h2>
                 <input type="file" id="fileInput" accept="image/*" />
-                <button id="processButton">Process</button>
-                <div id="output"></div>
-                <div id="assignments"></div>
+                <button id="processButton">Process Syllabus</button>
             </div>
         `;
-
+        console.log("Im going to jump off a bridge");
+        // Insert the HTML into the document body
         document.body.insertAdjacentHTML('beforeend', syllabusUploadHTML);
 
+    
+        // Set up event listener for the process button
         document.getElementById('processButton').addEventListener('click', async () => {
             const fileInput = document.getElementById('fileInput');
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                const TesseractHandler = new TesseractHandler();
+                const TesseractHandler = new TesseractHandler();  // Placeholder for Tesseract OCR handler
                 const assignments = await TesseractHandler.processImage(file);
 
                 if (assignments) {

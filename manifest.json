@@ -16,6 +16,7 @@
       "js": [
         "js/Scenes/UserSetup.js",
         "js/Scenes/MainMenu.js",
+        "js/Scenes/SyllabusUpload.js",
         "js/Interfaces/UserInterface.js",
         "js/Interfaces/CanvasInterface.js",
         "js/Master.js"

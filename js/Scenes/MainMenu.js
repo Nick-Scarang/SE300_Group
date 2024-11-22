@@ -1,6 +1,8 @@
 class MainMenu {
     accessToken;
     Master;
+    userInterface;
+
     constructor(Master, accessToken, userInterface) {
         this.accessToken = accessToken;
         this.Master = Master;
@@ -8,15 +10,14 @@ class MainMenu {
         this.render();
     }
 
+    // Render the main menu
     render() {
-        // Clear previous content
         const existingContainer = document.getElementById('mainMenuContainer');
         if (existingContainer) {
             existingContainer.remove();
         }
 
-        // Create elements
-        const mainMenuHTML = ` 
+        const mainMenuHTML = `
             <div id="mainMenuContainer">
                 <h2>Main Menu</h2>
                 <p id="savedText">${this.accessToken}</p>
@@ -26,17 +27,14 @@ class MainMenu {
         `;
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
 
-        // Add event listener for the edit button
+        // Edit button event listener
         document.getElementById('editButton').addEventListener('click', () => {
-            // On edit button click, go to user setup without causing a loop
             this.userInterface.showUserSetup();
         });
 
+        // Upload syllabus button event listener
         document.getElementById('UploadSyllabus').addEventListener('click', () => {
             this.userInterface.showSyllabusUpload();
         });
-
-
-
     }
 }

@@ -1,31 +1,28 @@
 class Master {
+    CI;
+    UI;
+
     constructor() {
-        // Constructor logic, if necessary
         console.log("Master class instantiated");
     }
 
     static main() {
-        // Create an instance of Master (just once)
+        // Initialize the app by creating an instance of Master
         const instance = new Master();
-
-        // Perform any initialization logic for the app
         instance.initialize();
     }
 
-    // Example method to initialize the application
-    CI;
-    UI;
     initialize() {
         this.CI = new CanvasInterface();
         this.UI = new UserInterface(this);
     }
 
     checkToken() {
-        // Implement any logic you need for checking the token
+        // Implement logic to check if the token is valid
     }
 
     updateDatabases() {
-        // Implement logic to update the databases if necessary
+        // Implement logic to update databases if necessary
     }
 
     getCanvasInterface() {
@@ -33,5 +30,5 @@ class Master {
     }
 }
 
-// Load and initialize when the script is loaded (via manifest or as an entry point)
+// Load and initialize when the script is loaded
 Master.main();
