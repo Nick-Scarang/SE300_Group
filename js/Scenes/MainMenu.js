@@ -54,11 +54,12 @@ class MainMenu {
 
                 <!-- Collapsible Menu 4 -->
                 <details id="menu4">
-                    <summary>Menu 4</summary>
+                    <summary>Upload Syllabus</summary>
                     <div>
-                        <label for="menu4AccessToken">Access Token:</label>
-                        <input type="text" id="menu4AccessToken" value="${this.accessToken}" />
-                        <button id="menu4SaveButton">Save</button>
+                <input type="file" id="fileInput" accept="image/*" />
+                <button id="processButton">Process Syllabus</button>
+                <div id="output"></div>
+                <div id="assignments"></div>
                     </div>
                 </details>
 
@@ -79,6 +80,26 @@ class MainMenu {
         document.getElementById('editButton').addEventListener('click', () => {
             // On edit button click, go to user setup without causing a loop
             this.userInterface.showUserSetup();
+        });
+
+        document.getElementById('processButton').addEventListener('click', async () => {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const TesseractHandler = new TesseractHandler();  // Placeholder for Tesseract OCR handler
+                const assignments = await TesseractHandler.processImage(file);
+
+                if (assignments) {
+                    document.getElementById('output').textContent = "Extracted Text:";
+                    document.getElementById('assignments').innerHTML = assignments.map(
+                        (a) => `<p>${a.assignment}: ${a.weight}%</p>`
+                    ).join('');
+                } else {
+                    document.getElementById('output').textContent = "Failed to process the image.";
+                }
+            } else {
+                alert("Please select a file.");
+            }
         });
     }
 }
