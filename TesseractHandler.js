@@ -1,7 +1,11 @@
-import Tesseract from 'tesseract.js';
+class TesseractHandler {
+    static async processImage(file) {
+        if (typeof Tesseract === 'undefined') {
+            console.error('Tesseract.js failed to load!');
+        } else {
+            console.log('Tesseract.js loaded successfully');
+        }
 
-class TesseractHandler{
-    async processImage(file) {
         try {
             const result = await Tesseract.recognize(file, 'eng', {
                 logger: (info) => console.log(info),
@@ -16,8 +20,8 @@ class TesseractHandler{
         }
     }
 
-    extractAssignments(text) {
-        const assignmentRegex = /([A-Za-z\s]+)\s+(\d+)%/g;
+    static extractAssignments(text) {
+        const assignmentRegex = /(\n[A-Za-z\s]+)\s+(\d+)\s*(\d+)%/g;
         const assignments = [];
         let match;
 
