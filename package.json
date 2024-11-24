@@ -1,0 +1,15 @@
+{
+  "name": "se300_group",
+  "version": "1.0.0",
+  "main": "TesseractHandler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "tesseract.js": "^5.1.1"
+  }
+}

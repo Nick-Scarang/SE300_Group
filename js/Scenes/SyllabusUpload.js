@@ -1,3 +1,4 @@
+
 class SyllabusUpload {
     constructor(Master, userInterface) {
         this.Master = Master;
@@ -31,15 +32,19 @@ class SyllabusUpload {
             const fileInput = document.getElementById('fileInput');
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                const TesseractHandler = new TesseractHandler();  // Placeholder for Tesseract OCR handler
-                const assignments = await TesseractHandler.processImage(file);
+                try {
+                    const assignments = await TesseractHandler.processImage(file);
 
-                if (assignments) {
-                    document.getElementById('output').textContent = "Extracted Text:";
-                    document.getElementById('assignments').innerHTML = assignments.map(
-                        (a) => `<p>${a.assignment}: ${a.weight}%</p>`
-                    ).join('');
-                } else {
+                    if (assignments && assignments.length > 0) {
+                        document.getElementById('output').textContent = "Extracted Text:";
+                        document.getElementById('assignments').innerHTML = assignments
+                            .map((a) => `<p>${a.assignment}: ${a.weight}%</p>`)
+                            .join('');
+                    } else {
+                        document.getElementById('output').textContent = "No assignments found in the image.";
+                    }
+                } catch (error) {
+                    console.error("Error processing the syllabus:", error);
                     document.getElementById('output').textContent = "Failed to process the image.";
                 }
             } else {

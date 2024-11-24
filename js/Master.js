@@ -15,6 +15,7 @@ class Master {
     initialize() {
         this.CI = new CanvasInterface();
         this.UI = new UserInterface(this);
+        
     }
 
     checkToken() {
