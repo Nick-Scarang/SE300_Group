@@ -1,5 +1,3 @@
-import Tesseract from 'tesseract.js';
-
 class TesseractHandler{
     async processImage(file) {
         try {
