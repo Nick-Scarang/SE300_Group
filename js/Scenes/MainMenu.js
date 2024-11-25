@@ -34,11 +34,25 @@ class MainMenu {
 
                 <!-- Collapsible Menu 2 -->
                 <details id="menu2">
-                    <summary>Menu 2</summary>
+                    <summary>Edit Tasks</summary>
                     <div>
-                        <label for="menu2AccessToken">Access Token:</label>
-                        <input type="text" id="menu2AccessToken" value="${this.accessToken}" />
-                        <button id="menu2SaveButton">Save</button>
+                        
+                        <!-- Collapsible Menu 2.1 -->
+                        <details id="menu2.1">
+                            <summary>Add Task</summary>
+                            <div>
+                                <label for="menu2.1Header">Add Task:</label>    <!- label ->
+                    
+                            </div>
+                        </details>
+
+
+
+                        <!- Examples ->
+                        <!label for="menu2AccessToken"> Access Token:</label>   <!- label ->
+                        <!input type="text" id="menu2AccessToken" value="${this.accessToken}" /> <!text input >
+                        <!button id="menu2SaveButton"> Save</button> <! button >
+                        
                     </div>
                 </details>
 

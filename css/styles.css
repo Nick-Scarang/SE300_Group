@@ -1,12 +1,12 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    margin: 0;
-    padding: 20px;
+    font-family: Georgia, serif;
+    background-color: #c7bab7;
+    margin: 1em;
+    padding: 1em;
 }
 
 h2 {
-    color: #333;
+    color: #1d130b;
 }
 
 input[type="text"] {
@@ -17,14 +17,14 @@ input[type="text"] {
 
 button {
     padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
+    background-color: #1d130b;
+    color: #c7bab7;
     border: none;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #1d0b0b;
 }
 
 #userSetupContainer, #mainMenuContainer {
