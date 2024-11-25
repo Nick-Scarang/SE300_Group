@@ -14,6 +14,8 @@
     {
       "matches": ["https://*.erau.instructure.com/*"],
       "js": [
+        "node_modules/tesseract.js/dist/tesseract.min.js",
+        "TesseractHandler.js",
         "js/Scenes/UserSetup.js",
         "js/Scenes/MainMenu.js",
         "js/Interfaces/UserInterface.js",
