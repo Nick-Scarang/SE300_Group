@@ -19,8 +19,6 @@ class MainMenu {
         const mainMenuHTML = `
             <div id="mainMenuContainer">
                 <h2>Main Menu</h2>
-                <p id="savedText">${this.accessToken}</p>
-                <button id="editButton">Edit</button>
 
                 <!-- Collapsible Menu 1 -->
                 <details id="menu1">
@@ -52,14 +50,53 @@ class MainMenu {
                     </div>
                 </details>
 
-                <!-- Collapsible Menu 4 -->
+                <!-- User Setup -->
                 <details id="menu4">
-                    <summary>Upload Syllabus</summary>
+                    <summary>User Setup:</summary>
+                    <div>
+
+                    <!-- Confirm Courses in User Setup -->
+                <details id="menu4">
+                    <summary>Confirm Courses:</summary>
+                    <div>
+                <summary>Below are all your Canvas courses. We have</summary> 
+                <summary>preselected the courses we think you are </summary>
+                <summary>currently in. Please deselect the courses </summary>
+                <summary>you don't want and select the courses you do.</summary>
+                <button id="saveCourses">Save Courses</button>
+                    </div>
+                </details>
+
+
+                <!-- Upload Syllabi in User Setup -->
+                <details id="menu4">
+                    <summary>Upload Syllabi:</summary>
                     <div>
                 <input type="file" id="fileInput" accept="image/*" />
                 <button id="processButton">Process Syllabus</button>
-                <div id="output"></div>
-                <div id="assignments"></div>
+                    <div id="output"></div>
+                    <div id="assignments"></div>
+                </details>
+
+
+                <!-- Late Work Preference in User Setup -->
+                <details id="menu4">
+                    <summary>Late Work Preferences:</summary>
+                    <div>
+                <button id="saveCourses">Save Courses</button>
+                    </div>
+                </details>
+
+
+                <!-- Set Done Date in User Setup -->
+                <details id="menu4">
+                    <summary>Set Done Date:</summary>
+                    <div>
+                <button id="saveCourses">Save Courses</button>
+                    </div>
+                </details>
+
+
                     </div>
                 </details>
 
