@@ -1,18 +1,36 @@
 class MainMenu {
+    master;
     accessToken;
-    Master;
-    formula;
+    userInterface;
     courseDatabase;
     taskDatabase;
     userPrefDatabase;
-    constructor(Master, accessToken, userInterface, courseDatabase, taskDatabase, userPrefDatabase) {
+    formula;
+    constructor(master, accessToken, userInterface) {
         this.accessToken = accessToken;
-        this.Master = Master;
+        this.master = master;
         this.userInterface = userInterface;
-        this.courseDatabase = courseDatabase;
-        this.taskDatabase = taskDatabase;
-        this.userPrefDatabase = userPrefDatabase;
-        this.formula = new Formula(userPrefDatabase, taskDatabase);
+        // Check and initialize courseDatabase if necessary
+        this.courseDatabase = this.userInterface.getCourseDatabase();
+        if (this.courseDatabase == null) {
+            this.courseDatabase = new CourseDatabase();
+            this.userInterface.setCourseDatabase(this.courseDatabase);
+        }
+
+        // Check and initialize taskDatabase if necessary
+        this.taskDatabase = this.userInterface.getTaskDatabase();
+        if (this.taskDatabase == null) {
+            this.taskDatabase = new TaskDatabase();
+            this.userInterface.setTaskDatabase(this.taskDatabase);
+        }
+
+        // Check and initialize userPrefDatabase if necessary
+        this.userPrefDatabase = this.userInterface.getUserPrefDatabase();
+        if (this.userPrefDatabase == null) {
+            this.userPrefDatabase = new UserPrefDatabase();
+            this.userInterface.setUserPrefDatabase(this.userPrefDatabase);
+        }
+        this.saveData();
         this.render();
     }
 
@@ -54,7 +72,7 @@ class MainMenu {
                     <div>
                         <label for="numTasksField">Number of tasks:</label>
                         <input type="text" id="numTasksField"/>
-                        <button id="numTasksBut">Save</button>
+                        <button id="saveUserPref">Save</button>
                     </div>
                 </details>
 
@@ -113,6 +131,36 @@ class MainMenu {
                 alert("Please select a file.");
             }
         });
+        document.getElementById('saveUserPref').addEventListener('click', () => {
+            // Get the value from the input field and trim any leading/trailing spaces
+            const numTasksInput = document.getElementById('numTasksField').value.trim();
+            const numTasksValue = parseInt(numTasksInput, 10);
+            let numTasksValid = false;
+            let dateValid = false;
+            let lateWorkValid = false;
+            let doneDateValid = false;
+
+            // If the input is valid (not empty, a valid number, and greater than 0)
+            if (numTasksInput !== '' && !isNaN(numTasksValue) && numTasksValue > 0 && numTasksValue.toString() === numTasksInput) {
+                this.userPrefDatabase.setNumTasks(numTasksValue);
+                numTasksValid = true;
+            } else {
+                alert("Please enter a valid number greater than 0 for the number of tasks.");
+            }
+            if (numTasksValid && dateValid && lateWorkValid && doneDateValid){
+                this.saveUserPref();
+                this.userPrefDatabase.setDate();
+                this.userPrefDatabase.setLateWorkPref();
+                this.userPrefDatabase.setDoneDate();
+            }
+        });
+
+
+
+    }
+    saveUserPref(){
+        chrome.storage.local.set({ userPrefDatabase: this.userPrefDatabase }, () => {
+        });
     }
     saveData(){
         chrome.storage.local.set({ accessToken: this.accessToken, courseDatabase: this.courseDatabase, taskDatabase: this.taskDatabase, userPrefDatabase: this.userPrefDatabase }, () => {
@@ -120,5 +168,9 @@ class MainMenu {
     }
     updateTaskList(){
         this.formula = new formula(this.userPrefDatabase, this.taskDatabase)
+    }
+    isInteger(str) {
+        const num = parseInt(str, 10); // Parse string to integer (base 10)
+        return !isNaN(num) && num.toString() === str.trim(); // Ensure the number equals the string
     }
 }

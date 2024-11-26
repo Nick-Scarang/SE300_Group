@@ -46,7 +46,7 @@ class UserInterface {
         // Clear any existing UI
         this.clearExistingUI();
         // Create MainMenu UI
-        new MainMenu(this.Master, this.accessToken, this, this.courseDatabase, this.taskDatabase, this.userPrefDatabase);
+        new MainMenu(this.Master, this.accessToken, this);
     }
 
     clearExistingUI() {
@@ -59,5 +59,23 @@ class UserInterface {
         if (existingMainMenu) {
             existingMainMenu.remove();
         }
+    }
+    getCourseDatabase(){
+        return this.courseDatabase;
+    }
+    getTaskDatabase(){
+        return this.taskDatabase;
+    }
+    getUserPrefDatabase(){
+        return this.userPrefDatabase;
+    }
+    setCourseDatabase(courseDatabse){
+        this.courseDatabase = courseDatabse;
+    }
+    setTaskDatabase(taskDatabase){
+        this.taskDatabase = taskDatabase;
+    }
+    setUserPrefDatabase(userPrefDatabase){
+        this.userPrefDatabase = userPrefDatabase;
     }
 }

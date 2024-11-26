@@ -1,14 +1,9 @@
 class UserPrefDatabase {
-    constructor(canvasUrl, lateWorkPref, numTasks, doneDate, dataDisplay) {
-        this.canvasUrl = canvasUrl;
+    constructor(lateWorkPref, numTasks, doneDate, dataDisplay) {
         this.lateWorkPref = lateWorkPref;
         this.numTasks = numTasks;
         this.doneDate = doneDate;
         this.dataDisplay = dataDisplay;
-    }
-
-    setUrl(url) {
-        this.canvasUrl = url;
     }
 
     setLateWorkPref(lateWorkPref) {
