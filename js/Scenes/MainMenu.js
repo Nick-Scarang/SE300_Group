@@ -12,7 +12,7 @@ class MainMenu {
         this.courseDatabase = courseDatabase;
         this.taskDatabase = taskDatabase;
         this.userPrefDatabase = userPrefDatabase;
-        this.formula = new formula(userPrefDatabase, taskDatabase);
+        this.formula = new Formula(userPrefDatabase, taskDatabase);
         this.render();
     }
 

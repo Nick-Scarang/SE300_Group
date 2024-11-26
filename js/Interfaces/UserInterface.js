@@ -13,12 +13,18 @@ class UserInterface {
         chrome.storage.local.get(['accessToken', 'courseDatabase', 'taskDatabase', 'userPrefDatabase'], (result) => {
             if(result.courseDatabase){
                 this.courseDatabase = result.courseDatabase;
+            } else {
+                this.courseDatabase = new CourseDatabase();
             }
             if(result.taskDatabase){
                 this.taskDatabase = result.taskDatabase;
+            } else {
+                this.taskDatabase = new TaskDatabase();
             }
             if(result.userPrefDatabase){
                 this.userPrefDatabase = result.userPrefDatabase;
+            } else {
+                this.userPrefDatabase = new UserPrefDatabase();
             }
             if (result.accessToken) {
                 this.accessToken = result.accessToken;

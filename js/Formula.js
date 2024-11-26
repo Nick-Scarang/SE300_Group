@@ -1,4 +1,4 @@
-class formula {
+class Formula {
     constructor(userPref, tasks) {
         this.userPref = userPref;
         this.tasks = tasks;
