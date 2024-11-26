@@ -1,16 +1,28 @@
 class UserInterface {
     Master;
     accessToken;
+    courseDatabase;
+    taskDatabase;
+    userPrefDatabase;
     constructor(Master) {
         this.Master = Master;
         this.loadSavedData();
     }
 
     loadSavedData() {
-        chrome.storage.local.get(['accessToken'], (result) => {
+        chrome.storage.local.get(['accessToken', 'courseDatabase', 'taskDatabase', 'userPrefDatabase'], (result) => {
+            if(result.courseDatabase){
+                this.courseDatabase = result.courseDatabase;
+            }
+            if(result.taskDatabase){
+                this.taskDatabase = result.taskDatabase;
+            }
+            if(result.userPrefDatabase){
+                this.userPrefDatabase = result.userPrefDatabase;
+            }
             if (result.accessToken) {
                 this.accessToken = result.accessToken;
-                this.showMainMenu(result.accessToken);  // Show Main Menu
+                this.showMainMenu();  // Show Main Menu
             } else {
                 this.showUserSetup();  // Show Setup if no token exists
             }
@@ -28,7 +40,7 @@ class UserInterface {
         // Clear any existing UI
         this.clearExistingUI();
         // Create MainMenu UI
-        new MainMenu(this.Master, this.accessToken, this);
+        new MainMenu(this.Master, this.accessToken, this, this.courseDatabase, this.taskDatabase, this.userPrefDatabase);
     }
 
     clearExistingUI() {
