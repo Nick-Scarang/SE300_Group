@@ -1,10 +1,18 @@
 class MainMenu {
     accessToken;
     Master;
-    constructor(Master, accessToken, userInterface) {
+    formula;
+    courseDatabase;
+    taskDatabase;
+    userPrefDatabase;
+    constructor(Master, accessToken, userInterface, courseDatabase, taskDatabase, userPrefDatabase) {
         this.accessToken = accessToken;
         this.Master = Master;
-        this.userInterface = userInterface
+        this.userInterface = userInterface;
+        this.courseDatabase = courseDatabase;
+        this.taskDatabase = taskDatabase;
+        this.userPrefDatabase = userPrefDatabase;
+        this.formula = new formula(userPrefDatabase, taskDatabase);
         this.render();
     }
 
@@ -19,8 +27,6 @@ class MainMenu {
         const mainMenuHTML = `
             <div id="mainMenuContainer">
                 <h2>Main Menu</h2>
-                <p id="savedText">${this.accessToken}</p>
-                <button id="editButton">Edit</button>
 
                 <!-- Collapsible Menu 1 -->
                 <details id="menu1">
@@ -44,11 +50,11 @@ class MainMenu {
 
                 <!-- Collapsible Menu 3 -->
                 <details id="menu3">
-                    <summary>Menu 3</summary>
+                    <summary>User Preferences:</summary>
                     <div>
-                        <label for="menu3AccessToken">Access Token:</label>
-                        <input type="text" id="menu3AccessToken" value="${this.accessToken}" />
-                        <button id="menu3SaveButton">Save</button>
+                        <label for="numTasksField">Number of tasks:</label>
+                        <input type="text" id="numTasksField"/>
+                        <button id="numTasksBut">Save</button>
                     </div>
                 </details>
 
@@ -65,17 +71,19 @@ class MainMenu {
 
                 <!-- Collapsible Menu 5 -->
                 <details id="menu5">
-                    <summary>Menu 5</summary>
+                    <summary>Your Canvas API Access Token:</summary>
                     <div>
                         <label for="menu5AccessToken">Access Token:</label>
-                        <input type="text" id="menu5AccessToken" value="${this.accessToken}" />
-                        <button id="menu5SaveButton">Save</button>
+                        <input type="text" id="menu5AccessToken" value="${this.accessToken}" readonly/>
+                        <button id="editButton">To User Setup Scene</button>
                     </div>
                 </details>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
-
+        this.addEventListeners();
+    }
+    addEventListeners(){
         // Add event listener for the edit button
         document.getElementById('editButton').addEventListener('click', () => {
             // On edit button click, go to user setup without causing a loop
@@ -105,5 +113,12 @@ class MainMenu {
                 alert("Please select a file.");
             }
         });
+    }
+    saveData(){
+        chrome.storage.local.set({ accessToken: this.accessToken, courseDatabase: this.courseDatabase, taskDatabase: this.taskDatabase, userPrefDatabase: this.userPrefDatabase }, () => {
+        });
+    }
+    updateTaskList(){
+        this.formula = new formula(this.userPrefDatabase, this.taskDatabase)
     }
 }
