@@ -29,6 +29,7 @@ class MainMenu {
         this.userPrefDatabase = this.userInterface.getUserPrefDatabase();
         if (this.userPrefDatabase == null) {
             this.userPrefDatabase = new UserPrefDatabase();
+            console.log('Instantiated UserPrefDatabase from MainMenu')
             this.userInterface.setUserPrefDatabase(this.userPrefDatabase);
         }
         this.saveData();
@@ -160,6 +161,7 @@ class MainMenu {
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
+        this.populateUserPreferences();
         this.addEventListeners();
     }
 
@@ -194,8 +196,6 @@ class MainMenu {
             }
         });
         document.getElementById('saveUserPref').addEventListener('click', () => {
-            console.table(this.userPrefDatabase);
-            console.log(this.userPrefDatabase.getPriorityNumBool());
             const numTasksInput = document.getElementById('numTasksField').value.trim();
             const numTasksValue = parseInt(numTasksInput, 10);
             let numTasksValid = false;
@@ -231,10 +231,30 @@ class MainMenu {
 
 
     }
+    populateUserPreferences() {
+        // Set the number of tasks using the getter
+        document.getElementById('numTasksField').value = this.userPrefDatabase.getNumTasks();
 
+        // Set checkbox values based on user preferences using getters
+        document.getElementById('priorityNumCheck').checked = this.userPrefDatabase.getPriorityNumBool();
+        document.getElementById('taskNameCheck').checked = this.userPrefDatabase.getTaskNameBool();
+        document.getElementById('courseNameCheck').checked = this.userPrefDatabase.getCourseBool();
+        document.getElementById('doneDateCheck').checked = this.userPrefDatabase.getDoneDateBool();
+        document.getElementById('progressCheck').checked = this.userPrefDatabase.getProgressBool();
+        document.getElementById('dueDateCheck').checked = this.userPrefDatabase.getDueDateBool();
+        document.getElementById('weightCheck').checked = this.userPrefDatabase.getWeightBool();
+
+        document.getElementById('completedAssignmentsToggle').checked = this.userPrefDatabase.getCompletedAssignmentsBool();
+
+        document.getElementById('examsCheck').checked = this.userPrefDatabase.getExamsBool();
+        document.getElementById('homeworkCheck').checked = this.userPrefDatabase.getHomeworkBool();
+        document.getElementById('essayCheck').checked = this.userPrefDatabase.getEssayBool();
+        document.getElementById('allCheck').checked = this.userPrefDatabase.getAllBool();
+    }
     saveUserPref() {
         chrome.storage.local.set({userPrefDatabase: this.userPrefDatabase}, () => {
             console.log("Saving User Preferences...")
+            console.table(this.userPrefDatabase);
         });
     }
 

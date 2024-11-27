@@ -12,19 +12,23 @@ class UserInterface {
     loadSavedData() {
         chrome.storage.local.get(['accessToken', 'courseDatabase', 'taskDatabase', 'userPrefDatabase'], (result) => {
             if(result.courseDatabase){
-                this.courseDatabase = result.courseDatabase;
+                this.courseDatabase = Object.assign(new CourseDatabase(), result.courseDatabase);
             } else {
                 this.courseDatabase = new CourseDatabase();
             }
             if(result.taskDatabase){
-                this.taskDatabase = result.taskDatabase;
+                this.taskDatabase = Object.assign(new TaskDatabase(), result.taskDatabase);
             } else {
                 this.taskDatabase = new TaskDatabase();
             }
             if(result.userPrefDatabase){
-                this.userPrefDatabase = result.userPrefDatabase;
+                this.userPrefDatabase = Object.assign(new UserPrefDatabase(), result.userPrefDatabase);
+                console.log('Found instantiation of UserPrefDatabase in saved data');
+                console.table(this.userPrefDatabase);
             } else {
                 this.userPrefDatabase = new UserPrefDatabase();
+                console.log('Instantiated UserPrefDatabase from UI');
+                console.table(this.userPrefDatabase);
             }
             if (result.accessToken) {
                 this.accessToken = result.accessToken;
@@ -48,6 +52,7 @@ class UserInterface {
         this.clearExistingUI();
         // Create MainMenu UI
         new MainMenu(this.Master, this.accessToken, this);
+        console.log('Instantiated MainMenu from UI');
     }
 
     clearExistingUI() {
