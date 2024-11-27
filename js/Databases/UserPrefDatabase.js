@@ -1,119 +1,122 @@
 class UserPrefDatabase {
-    numTasks;
-    priorityNumBool;
-    taskNameBool;
-    doneDateBool;
-    completedAssignmentsBool;
-    progressBool;
-    courseBool;
-    weightBool;
-    dueDateBool;
-    examsBool;
-    homeworkBool;
-    essayBool;
-    allBool;
+    // Private fields (using # prefix)
+    #numTasks = 5;
+    #priorityNumBool = true;
+    #taskNameBool = true;
+    #doneDateBool = true;
+    #completedAssignmentsBool = false;
+    #progressBool = true;
+    #courseBool = true;
+    #weightBool = false;
+    #dueDateBool = false;
+    #examsBool = false;
+    #homeworkBool = false;
+    #essayBool = false;
+    #allBool = true;
+
+    // Public setter and getter methods
 
     setNumTasks(numTasks) {
-        this.numTasks = numTasks;
+        this.#numTasks = numTasks;
     }
 
     getNumTasks() {
-        return this.numTasks;
+        return this.#numTasks;
     }
 
     setPriorityNumBool(priorityNumBool) {
-        this.priorityNumBool = priorityNumBool;
+        this.#priorityNumBool = priorityNumBool;
     }
 
     getPriorityNumBool() {
-        return this.priorityNumBool;
+        return this.#priorityNumBool;
     }
 
     setTaskNameBool(taskNameBool) {
-        this.taskNameBool = taskNameBool;
+        this.#taskNameBool = taskNameBool;
     }
 
     getTaskNameBool() {
-        return this.taskNameBool;
+        return this.#taskNameBool;
     }
 
     setDoneDateBool(doneDateBool) {
-        this.doneDateBool = doneDateBool;
+        this.#doneDateBool = doneDateBool;
     }
 
     getDoneDateBool() {
-        return this.doneDateBool;
+        return this.#doneDateBool;
     }
 
     setCompletedAssignmentsBool(completedAssignmentsBool) {
-        this.completedAssignmentsBool = completedAssignmentsBool;
+        this.#completedAssignmentsBool = completedAssignmentsBool;
     }
 
     getCompletedAssignmentsBool() {
-        return this.completedAssignmentsBool;
+        return this.#completedAssignmentsBool;
     }
 
     setProgressBool(progressBool) {
-        this.progressBool = progressBool;
+        this.#progressBool = progressBool;
     }
 
     getProgressBool() {
-        return this.progressBool;
+        return this.#progressBool;
     }
 
     setCourseBool(courseBool) {
-        this.courseBool = courseBool;
+        this.#courseBool = courseBool;
     }
 
     getCourseBool() {
-        return this.courseBool;
+        return this.#courseBool;
     }
 
     setWeightBool(weightBool) {
-        this.weightBool = weightBool;
+        this.#weightBool = weightBool;
     }
 
     getWeightBool() {
-        return this.weightBool;
+        return this.#weightBool;
     }
 
     setDueDateBool(dueDateBool) {
-        this.dueDateBool = dueDateBool;
+        this.#dueDateBool = dueDateBool;
     }
 
     getDueDateBool() {
-        return this.dueDateBool;
+        return this.#dueDateBool;
     }
 
     setExamsBool(examsBool) {
-        this.examsBool = examsBool;
+        this.#examsBool = examsBool;
     }
 
     getExamsBool() {
-        return this.examsBool;
+        return this.#examsBool;
     }
 
     setHomeworkBool(homeworkBool) {
-        this.homeworkBool = homeworkBool;
+        this.#homeworkBool = homeworkBool;
     }
 
     getHomeworkBool() {
-        return this.homeworkBool;
+        return this.#homeworkBool;
     }
 
     setEssayBool(essayBool) {
-        this.essayBool = essayBool;
+        this.#essayBool = essayBool;
     }
 
     getEssayBool() {
-        return this.essayBool;
+        return this.#essayBool;
     }
 
     setAllBool(allBool) {
-        this.allBool = allBool;
+        this.#allBool = allBool;
     }
 
     getAllBool() {
-        return this.allBool;
+        return this.#allBool;
     }
 }

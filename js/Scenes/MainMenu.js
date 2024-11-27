@@ -232,6 +232,8 @@ class MainMenu {
 
     }
     populateUserPreferences() {
+        console.log('Populating the user preferences html elements.');
+        console.log(this.userPrefDatabase.getNumTasks());
         // Set the number of tasks using the getter
         document.getElementById('numTasksField').value = this.userPrefDatabase.getNumTasks();
 
