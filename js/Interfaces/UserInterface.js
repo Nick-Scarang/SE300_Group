@@ -1,9 +1,12 @@
 class UserInterface {
     Master;
     accessToken;
+    canvasInterface;
     courseDatabase;
     taskDatabase;
     userPrefDatabase;
+    courseList;
+
     constructor(Master) {
         this.Master = Master;
         this.loadSavedData();
@@ -11,39 +14,39 @@ class UserInterface {
 
     loadSavedData() {
         chrome.storage.local.get(['accessToken', 'courseDatabase', 'taskDatabase', 'userPrefDatabase'], (result) => {
-            if(result.courseDatabase){
+            if (result.courseDatabase) {
                 this.courseDatabase = Object.assign(new CourseDatabase(), result.courseDatabase);
             } else {
                 this.courseDatabase = new CourseDatabase();
             }
-            if(result.taskDatabase){
+
+            if (result.taskDatabase) {
                 this.taskDatabase = Object.assign(new TaskDatabase(), result.taskDatabase);
             } else {
                 this.taskDatabase = new TaskDatabase();
             }
-            if(result.userPrefDatabase){
+
+            if (result.userPrefDatabase) {
                 this.userPrefDatabase = Object.assign(new UserPrefDatabase(), result.userPrefDatabase);
-                console.log('Found instantiation of UserPrefDatabase in saved data');
-                console.table(this.userPrefDatabase);
             } else {
                 this.userPrefDatabase = new UserPrefDatabase();
-                console.log('Instantiated UserPrefDatabase from UI');
-                console.table(this.userPrefDatabase);
             }
+
             if (result.accessToken) {
                 this.accessToken = result.accessToken;
-                this.showMainMenu();  // Show Main Menu
+                // Initialize CanvasInterface and pass callbacks for token validation
+                this.canvasInterface = new CanvasInterface(this.accessToken, this);
+                this.canvasInterface.fetchCourses();
             } else {
                 this.showUserSetup();  // Show Setup if no token exists
             }
-            console.log(result)
         });
     }
 
     showUserSetup() {
         // Clear any existing UI
         this.clearExistingUI();
-        // Create UserSetup UI without passing showMainMenu directly
+        // Create UserSetup UI
         new UserSetup(this.Master, this);
     }
 
@@ -52,7 +55,6 @@ class UserInterface {
         this.clearExistingUI();
         // Create MainMenu UI
         new MainMenu(this.Master, this.accessToken, this);
-        console.log('Instantiated MainMenu from UI');
     }
 
     clearExistingUI() {
@@ -66,6 +68,36 @@ class UserInterface {
             existingMainMenu.remove();
         }
     }
+
+    // Callback for valid token
+    accessTokenFoundValid(courseList) {
+        console.log('Token is valid and courses are fetched:', courseList);
+        this.courseList = courseList;
+
+        // Save the access token to chrome.storage after validation
+        chrome.storage.local.set({ accessToken: this.accessToken }, () => {
+            console.log("Token saved successfully:", this.accessToken);
+        });
+
+        // Show the main menu once the token is valid
+        this.showMainMenu();
+    }
+
+    // Callback for invalid token
+    accessTokenFoundInvalid() {
+        console.log('Token is invalid');
+        // Show the user setup UI to enter a new token
+        this.showUserSetup();
+    }
+
+    userTryingToSaveAccessToken(accessToken) {
+        // Initialize CanvasInterface with the new token and validate it
+        this.accessToken = accessToken;
+        this.canvasInterface = new CanvasInterface(this.accessToken, this);
+
+        // Validate token via CanvasInterface
+        this.canvasInterface.fetchCourses();  // This will trigger either accessTokenFoundValid or accessTokenFoundInvalid
+    }
     getCourseDatabase(){
         return this.courseDatabase;
     }
@@ -75,8 +107,8 @@ class UserInterface {
     getUserPrefDatabase(){
         return this.userPrefDatabase;
     }
-    setCourseDatabase(courseDatabse){
-        this.courseDatabase = courseDatabse;
+    setCourseDatabase(courseDatabase){
+        this.courseDatabase = courseDatabase;
     }
     setTaskDatabase(taskDatabase){
         this.taskDatabase = taskDatabase;

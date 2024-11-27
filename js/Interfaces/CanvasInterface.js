@@ -1,39 +1,56 @@
 class CanvasInterface {
     // Define canvasUrl and initialize variables
     canvasUrl = "https://erau.instructure.com";
-    accessToken = "";
+    accessToken;
     courses = [];
+    userInterface;
+
+    constructor(accessToken, userInterface) {
+        this.accessToken = accessToken;
+        this.userInterface = userInterface;
+    }
 
     // Fetch courses method
-    fetchCourses() {
-        // Retrieve the access token from storage
-        chrome.storage.local.get(["accessToken"], async (data) => {
-            console.log("Retrieved data from storage:", data);  // Log the retrieved data
+    async fetchCourses() {
+        // Ensure access token is present
+        if (!this.accessToken) {
+            console.error("No access token provided.");
+            this.userInterface.accessTokenFoundInvalid();
+            return;
+        }
 
-            // Check if the access token is present in storage
-            if (!data.accessToken) {
-                console.error("No access token found in storage");
-                return;
-            }
-            // Set the access token to the class property
-            this.accessToken = data.accessToken;
-            console.log("Access Token:", this.accessToken);  // Log the access token
+        console.log("Access Token:", this.accessToken);  // Log the access token
+
+        try {
             // Make the API request using the retrieved token
-            try {
-                const response = await fetch(`${this.canvasUrl}/api/v1/courses`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${this.accessToken}`
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch courses: ${response.statusText}`);
+            const response = await fetch(`${this.canvasUrl}/api/v1/courses`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${this.accessToken}`
                 }
+            });
+
+            // Handle unsuccessful responses (e.g., 401 Unauthorized)
+            if (!response.ok) {
+                if (response.status === 401) {
+                    this.userInterface.accessTokenFoundInvalid();
+                    alert("Unauthorized. Please check your access token.");
+                } else {
+                    alert(`Failed to fetch courses: ${response.statusText}`);
+                }
+                throw new Error(`Failed to fetch courses: ${response.statusText}`);
+            } else {
+                // Handle successful response
                 this.courses = await response.json();
                 console.log("Fetched Courses:", this.courses);
-            } catch (error) {
-                console.error("Error fetching courses:", error);
+
+                // Notify the user interface with the fetched courses
+                this.userInterface.accessTokenFoundValid(this.courses);
             }
-        });
+        } catch (error) {
+            // Handle any errors during the fetch process
+            console.error("Error fetching courses:", error);
+            this.userInterface.accessTokenFoundInvalid();
+        }
     }
 }

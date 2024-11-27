@@ -1,6 +1,4 @@
 class UserSetup {
-    Master;
-    accessToken;
     constructor(Master, userInterface) {
         this.Master = Master;
         this.userInterface = userInterface;
@@ -40,14 +38,8 @@ class UserSetup {
         const inputText = document.getElementById('inputField').value;
 
         if (inputText) {
-            // Save the data to chrome.storage
-            chrome.storage.local.set({ accessToken: inputText }, () => {
-                this.accessToken = inputText;
-                // Switch to MainMenu after saving
-                this.userInterface.showMainMenu();
-                // Optionally, trigger any further actions after saving the token
-                this.Master.getCanvasInterface().fetchCourses();
-            });
+            // Pass the inputText (token) to UserInterface for validation and saving
+            this.userInterface.userTryingToSaveAccessToken(inputText);
         } else {
             alert("Please enter a value.");
         }
