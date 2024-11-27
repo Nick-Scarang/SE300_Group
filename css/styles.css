@@ -41,4 +41,44 @@ button:hover {
 h2 {
     margin: 0 0 10px 0;
 }
+/* Style the toggle switch */
+#completedAssignmentsToggle {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 50px;
+    height: 25px;
+    border-radius: 25px;
+    background-color: #ccc;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+    vertical-align: middle; /* Align the toggle vertically */
+}
+
+#completedAssignmentsToggle:checked {
+    background-color: #4CAF50;
+}
+
+#completedAssignmentsToggle:before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: white;
+    transition: 0.3s;
+}
+
+#completedAssignmentsToggle:checked:before {
+    left: 27px;
+}
+
+/* Align the labels vertically */
+div > label {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 5px; /* Optional: add a little spacing between Yes and No */
+}
 

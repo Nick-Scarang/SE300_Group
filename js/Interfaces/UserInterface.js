@@ -32,6 +32,7 @@ class UserInterface {
             } else {
                 this.showUserSetup();  // Show Setup if no token exists
             }
+            console.log(result)
         });
     }
 

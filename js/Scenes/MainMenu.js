@@ -6,6 +6,7 @@ class MainMenu {
     taskDatabase;
     userPrefDatabase;
     formula;
+
     constructor(master, accessToken, userInterface) {
         this.accessToken = accessToken;
         this.master = master;
@@ -70,11 +71,71 @@ class MainMenu {
                 <details id="menu3">
                     <summary>User Preferences:</summary>
                     <div>
-                        <label for="numTasksField">Number of tasks:</label>
+                        <p>Please select the number of tasks you would like to be displayed:</p>
                         <input type="text" id="numTasksField"/>
-                        <button id="saveUserPref">Save</button>
                     </div>
+                    <div>
+                        <p>Please select the fields you would like to display in your task list:</p>
+                        <label>
+                            <input type="checkbox" id="priorityNumCheck" />
+                            Priority Number
+                        </label><br>
+                        <label>
+                            <input type="checkbox" id="taskNameCheck" />
+                            Task Name
+                        </label><br>
+                        <label>
+                            <input type="checkbox" id="courseNameCheck" />
+                            Course Name
+                        </label><br>
+                        <label>
+                            <input type="checkbox" id="doneDateCheck" />
+                            Done Date
+                        </label><br>
+                        <label>
+                            <input type="checkbox" id="progressCheck" />
+                            Progress
+                        </label><br>
+                        <label>
+                            <input type="checkbox" id="dueDateCheck" />
+                            Due Date
+                        </label><br>
+                        <label>
+                            <input type="checkbox" id="weightCheck" />
+                            Weight
+                        </label><br>
+                    </div>
+                
+                    <div>
+                        <p>Would you like to display completed assignments?</p>
+                        <label for="completedAssignmentsToggle">No</label>
+                        <input type="checkbox" id="completedAssignmentsToggle" />
+                        <label for="completedAssignmentsToggle">Yes</label>
+                    </div>
+                
+                    <div>
+                        <p>Please select which types of tasks you would like to display:</p>
+                        <label>
+                            <input type="checkbox" id="examsCheck" />
+                            Exams
+                        </label><br>
+                        <label>
+                            <input type="checkbox" id="homeworkCheck" />
+                            Homework
+                        </label><br>
+                        <label>
+                            <input type="checkbox" id="essayCheck" />
+                            Essays
+                        </label><br>
+                        <label>
+                            <input type="checkbox" id="allCheck" />
+                            All Tasks
+                        </label><br>
+                    </div>
+                
+                    <button id="saveUserPref" style="margin-top: 20px;">Save</button>
                 </details>
+                
 
                 <!-- Collapsible Menu 4 -->
                 <details id="menu4">
@@ -101,7 +162,8 @@ class MainMenu {
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
         this.addEventListeners();
     }
-    addEventListeners(){
+
+    addEventListeners() {
         // Add event listener for the edit button
         document.getElementById('editButton').addEventListener('click', () => {
             // On edit button click, go to user setup without causing a loop
@@ -132,43 +194,64 @@ class MainMenu {
             }
         });
         document.getElementById('saveUserPref').addEventListener('click', () => {
-            // Get the value from the input field and trim any leading/trailing spaces
+            console.table(this.userPrefDatabase);
+            console.log(this.userPrefDatabase.getPriorityNumBool());
             const numTasksInput = document.getElementById('numTasksField').value.trim();
             const numTasksValue = parseInt(numTasksInput, 10);
             let numTasksValid = false;
-            let dateValid = false;
-            let lateWorkValid = false;
-            let doneDateValid = false;
 
-            // If the input is valid (not empty, a valid number, and greater than 0)
             if (numTasksInput !== '' && !isNaN(numTasksValue) && numTasksValue > 0 && numTasksValue.toString() === numTasksInput) {
                 this.userPrefDatabase.setNumTasks(numTasksValue);
                 numTasksValid = true;
             } else {
                 alert("Please enter a valid number greater than 0 for the number of tasks.");
             }
-            if (numTasksValid && dateValid && lateWorkValid && doneDateValid){
+
+            if (numTasksValid) {
+                // Set the boolean values from the checkboxes
+                this.userPrefDatabase.setPriorityNumBool(document.getElementById('priorityNumCheck').checked);
+                this.userPrefDatabase.setTaskNameBool(document.getElementById('taskNameCheck').checked);
+                this.userPrefDatabase.setCourseBool(document.getElementById('courseNameCheck').checked);
+                this.userPrefDatabase.setDoneDateBool(document.getElementById('doneDateCheck').checked);
+                this.userPrefDatabase.setProgressBool(document.getElementById('progressCheck').checked);
+                this.userPrefDatabase.setDueDateBool(document.getElementById('dueDateCheck').checked);
+                this.userPrefDatabase.setWeightBool(document.getElementById('weightCheck').checked);
+                this.userPrefDatabase.setCompletedAssignmentsBool(document.getElementById('completedAssignmentsToggle').checked);
+                this.userPrefDatabase.setExamsBool(document.getElementById('examsCheck').checked);
+                this.userPrefDatabase.setHomeworkBool(document.getElementById('homeworkCheck').checked);
+                this.userPrefDatabase.setEssayBool(document.getElementById('essayCheck').checked);
+                this.userPrefDatabase.setAllBool(document.getElementById('allCheck').checked);
+
+                // Optionally call saveUserPref() or similar function
                 this.saveUserPref();
-                this.userPrefDatabase.setDate();
-                this.userPrefDatabase.setLateWorkPref();
-                this.userPrefDatabase.setDoneDate();
             }
         });
 
 
 
+
     }
-    saveUserPref(){
-        chrome.storage.local.set({ userPrefDatabase: this.userPrefDatabase }, () => {
+
+    saveUserPref() {
+        chrome.storage.local.set({userPrefDatabase: this.userPrefDatabase}, () => {
+            console.log("Saving User Preferences...")
         });
     }
-    saveData(){
-        chrome.storage.local.set({ accessToken: this.accessToken, courseDatabase: this.courseDatabase, taskDatabase: this.taskDatabase, userPrefDatabase: this.userPrefDatabase }, () => {
+
+    saveData() {
+        chrome.storage.local.set({
+            accessToken: this.accessToken,
+            courseDatabase: this.courseDatabase,
+            taskDatabase: this.taskDatabase,
+            userPrefDatabase: this.userPrefDatabase
+        }, () => {
         });
     }
-    updateTaskList(){
-        this.formula = new formula(this.userPrefDatabase, this.taskDatabase)
+
+    updateTaskList() {
+        this.formula = new Formula(this.userPrefDatabase, this.taskDatabase)
     }
+
     isInteger(str) {
         const num = parseInt(str, 10); // Parse string to integer (base 10)
         return !isNaN(num) && num.toString() === str.trim(); // Ensure the number equals the string
