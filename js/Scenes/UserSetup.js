@@ -43,6 +43,8 @@ class UserSetup {
 
             // Pass the inputText (token) to UserInterface for validation and saving
             this.userInterface.userTryingToSaveAccessToken(inputText);
+
+            this.Master.getCanvasInterface().fetchCourses();
         } else {
             alert("Please enter a value.");
         }
