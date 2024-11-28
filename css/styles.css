@@ -89,4 +89,18 @@ div > label {
     margin: 0 5px; /* Optional: add a little spacing between Yes and No */
 }
 
+.course-button {
+    margin: 5px;
+    padding: 10px;
+    background-color: lightgray;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.course-button.selected {
+    background-color: lightblue;
+    font-weight: bold;
+}
+
 
