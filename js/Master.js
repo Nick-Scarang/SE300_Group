@@ -18,6 +18,11 @@ class Master {
     initialize() {
         this.CI = new CanvasInterface();
         this.UI = new UserInterface(this);
+
+        this.CI.fetchCourses().then(() => {
+            console.log('Courses fetched:', this.CI.courses);
+            this.UI.showMainMenu();
+        });
     }
     checkToken(){
 

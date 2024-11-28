@@ -5,35 +5,29 @@ class CanvasInterface {
     courses = [];
 
     // Fetch courses method
-    fetchCourses() {
-        // Retrieve the access token from storage
-        chrome.storage.local.get(["accessToken"], async (data) => {
-            console.log("Retrieved data from storage:", data);  // Log the retrieved data
+   async fetchCourses() {
+        const token = this.accessToken; 
+        const apiUrl = 'https://erau.instructure.com/api/v1/courses'; 
 
-            // Check if the access token is present in storage
-            if (!data.accessToken) {
-                console.error("No access token found in storage");
-                return;
-            }
-            // Set the access token to the class property
-            this.accessToken = data.accessToken;
-            console.log("Access Token:", this.accessToken);  // Log the access token
-            // Make the API request using the retrieved token
-            try {
-                const response = await fetch(`${this.canvasUrl}/api/v1/courses`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${this.accessToken}`
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch courses: ${response.statusText}`);
+        try {
+            const response = await fetch(apiUrl, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
-                this.courses = await response.json();
-                console.log("Fetched Courses:", this.courses);
-            } catch (error) {
-                console.error("Error fetching courses:", error);
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.courses = data.map(course => ({
+                    id: course.id,
+                    name: course.name
+                }));
+                console.log('Courses fetched:', this.courses);
+            } else {
+                console.error('Failed to fetch courses:', response.statusText);
             }
-        });
+        } catch (error) {
+            console.error('Error fetching courses:', error);
+        }
     }
 }

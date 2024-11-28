@@ -19,8 +19,6 @@ class MainMenu {
         const mainMenuHTML = `
             <div id="mainMenuContainer">
                 <h2>Main Menu</h2>
-                <p id="savedText">${this.accessToken}</p>
-                <button id="editButton">Edit</button>
 
                 <!-- Collapsible Menu 1 -->
                 <details id="menu1">
@@ -52,15 +50,22 @@ class MainMenu {
                     </div>
                 </details>
 
-                    <!-- Confirm Courses in User Setup -->
+                <!-- User Setup -->
                 <details id="menu4">
+                    <summary>User Setup:</summary>
+                    <div>
+
+                    <!-- Confirm Courses in User Setup -->
+                <details id="confirmCourses">
                     <summary>Confirm Courses:</summary>
                     <div>
-                <summary>Below are all your Canvas courses. We have</summary> 
-                <summary>preselected the courses we think you are </summary>
-                <summary>currently in. Please deselect the courses </summary>
-                <summary>you don't want and select the courses you do.</summary>
-                <button id="saveCourses">Save Courses</button>
+                        <summary>Below are all your Canvas courses. We have</summary> 
+                        <summary>preselected the courses we think you are </summary>
+                        <summary>currently in. Please deselect the courses </summary>
+                        <summary>you don't want and select the courses you do.</summary>
+                        <div id = "courseContainer"></div>
+                        <button id="saveSelectedCourses">Save Selected Courses</button>
+                        <div id = "selectedCoursesOutput"></div>
                     </div>
                 </details>
 
@@ -110,6 +115,13 @@ class MainMenu {
         `;
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
 
+
+        this.displayCourses();
+
+        document.getElementById('saveSelectedCourses').addEventListener('click', () => {
+            this.saveSelectedCourses();
+        });
+
         // Add event listener for the edit button
         document.getElementById('editButton').addEventListener('click', () => {
             // On edit button click, go to user setup without causing a loop
@@ -140,4 +152,45 @@ class MainMenu {
             }
         });
     }
+
+    displayCourses() {
+        const courseContainer = document.getElementById('courseContainer');
+        const courses = this.Master.getCanvasInterface().courses;
+    
+        if (!courses || courses.length === 0) {
+            courseContainer.innerHTML = '<p>No courses found. Please refresh or check your API settings.</p>';
+            return;
+        }
+    
+        
+        courseContainer.innerHTML = '';
+    
+        courses.forEach((course) => {
+            const button = document.createElement('button');
+            button.textContent = course.name || `Course ${course.id}`;
+            button.dataset.courseId = course.id;
+            button.classList.add('course-button');
+    
+            button.addEventListener('click', () => {
+                button.classList.toggle('selected');
+            });
+    
+            courseContainer.appendChild(button);
+        });
+    }
+    
+    saveSelectedCourses() {
+        const selectedButtons = document.querySelectorAll('.course-button.selected');
+        const selectedCourses = Array.from(selectedButtons).map(button => {
+            const courseId = button.dataset.courseId;
+            return this.Master.getCanvasInterface().courses.find(course => course.id == courseId);
+        });
+    
+        this.Master.getCanvasInterface().courses = selectedCourses;
+    
+        const selectedCoursesOutput = document.getElementById('selectedCoursesOutput');
+        selectedCoursesOutput.innerHTML = '<h3>Selected Courses:</h3>' +
+            selectedCourses.map(course => `<p>${course.name}</p>`).join('');
+    }
+
 }
