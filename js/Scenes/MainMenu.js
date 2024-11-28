@@ -201,11 +201,60 @@ class MainMenu {
                 </details>
             </div>
         `;
+
+        this.displayCourses();
+
+
+
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
         this.populateUserPreferences();
         this.addEventListeners();
         this.updateTaskList();
     }
+
+
+    displayCourses() {
+        const courseContainer = document.getElementById('courseContainer');
+        const courses = this.Master.getCanvasInterface().courses;
+    
+        if (!courses || courses.length === 0) {
+            courseContainer.innerHTML = '<p>No courses found. Please refresh or check your API settings.</p>';
+            return;
+        }
+    
+        
+        courseContainer.innerHTML = '';
+    
+        courses.forEach((course) => {
+            const button = document.createElement('button');
+            button.textContent = course.name || `Course ${course.id}`;
+            button.dataset.courseId = course.id;
+            button.classList.add('course-button');
+    
+            button.addEventListener('click', () => {
+                button.classList.toggle('selected');
+            });
+    
+            courseContainer.appendChild(button);
+        });
+    }
+    
+    saveSelectedCourses() {
+        const selectedButtons = document.querySelectorAll('.course-button.selected');
+        const selectedCourses = Array.from(selectedButtons).map(button => {
+            const courseId = button.dataset.courseId;
+            return this.Master.getCanvasInterface().courses.find(course => course.id == courseId);
+        });
+    
+        this.Master.getCanvasInterface().courses = selectedCourses;
+    
+        const selectedCoursesOutput = document.getElementById('selectedCoursesOutput');
+        selectedCoursesOutput.innerHTML = '<h3>Selected Courses:</h3>' +
+            selectedCourses.map(course => `<p>${course.name}</p>`).join('');
+    }
+
+
+
 
     addEventListeners() {
         // Add event listener for the edit button
