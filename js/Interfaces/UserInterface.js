@@ -1,19 +1,16 @@
 class UserInterface {
-    Master;
     accessToken;
     canvasInterface;
     courseDatabase;
-    taskDatabase;
     userPrefDatabase;
     courseList;
 
-    constructor(Master) {
-        this.Master = Master;
+    constructor() {
         this.loadSavedData();
     }
 
     loadSavedData() {
-        chrome.storage.local.get(['accessToken', 'courseDatabase', 'taskDatabase', 'userPrefDatabase'], (result) => {
+        chrome.storage.local.get(['accessToken', 'courseDatabase', 'userPrefDatabase'], (result) => {
             if (result.courseDatabase) {
                 this.courseDatabase = Object.assign(new CourseDatabase(), result.courseDatabase);
             } else {
@@ -27,34 +24,34 @@ class UserInterface {
             }
 
             if (result.userPrefDatabase) {
+                console.log('Found saved User Preferences');
                 this.userPrefDatabase = Object.assign(new UserPrefDatabase(), result.userPrefDatabase);
+
+                console.table(this.userPrefDatabase);
             } else {
+                console.log('Did not find any saved User Preferences');
                 this.userPrefDatabase = new UserPrefDatabase();
+                console.table(this.userPrefDatabase);
             }
 
             if (result.accessToken) {
                 this.accessToken = result.accessToken;
-                // Initialize CanvasInterface and pass callbacks for token validation
                 this.canvasInterface = new CanvasInterface(this.accessToken, this);
                 this.canvasInterface.fetchCourses();
             } else {
-                this.showUserSetup();  // Show Setup if no token exists
+                this.showUserSetup();
             }
         });
     }
 
     showUserSetup() {
-        // Clear any existing UI
         this.clearExistingUI();
-        // Create UserSetup UI
-        new UserSetup(this.Master, this);
+        new UserSetup(this);
     }
 
     showMainMenu() {
-        // Clear any existing UI
         this.clearExistingUI();
-        // Create MainMenu UI
-        new MainMenu(this.Master, this.accessToken, this);
+        new MainMenu(this.accessToken, this);
     }
 
     clearExistingUI() {
@@ -69,51 +66,123 @@ class UserInterface {
         }
     }
 
-    // Callback for valid token
     accessTokenFoundValid(courseList) {
         console.log('Token is valid and courses are fetched:', courseList);
         this.courseList = courseList;
 
-        // Save the access token to chrome.storage after validation
         chrome.storage.local.set({ accessToken: this.accessToken }, () => {
             console.log("Token saved successfully:", this.accessToken);
         });
 
-        // Show the main menu once the token is valid
-        this.showMainMenu();
+        console.log('Fetching assignments...');
+        this.canvasInterface.fetchAssignments();
     }
 
-    // Callback for invalid token
     accessTokenFoundInvalid() {
         console.log('Token is invalid');
-        // Show the user setup UI to enter a new token
         this.showUserSetup();
     }
 
     userTryingToSaveAccessToken(accessToken) {
-        // Initialize CanvasInterface with the new token and validate it
         this.accessToken = accessToken;
         this.canvasInterface = new CanvasInterface(this.accessToken, this);
-
-        // Validate token via CanvasInterface
-        this.canvasInterface.fetchCourses();  // This will trigger either accessTokenFoundValid or accessTokenFoundInvalid
+        this.canvasInterface.fetchCourses();
     }
-    getCourseDatabase(){
+
+    getCourseDatabase() {
         return this.courseDatabase;
     }
-    getTaskDatabase(){
-        return this.taskDatabase;
-    }
-    getUserPrefDatabase(){
+
+    getUserPrefDatabase() {
         return this.userPrefDatabase;
     }
-    setCourseDatabase(courseDatabase){
+
+    setCourseDatabase(courseDatabase) {
         this.courseDatabase = courseDatabase;
+        this.saveCourseDatabase();
     }
-    setTaskDatabase(taskDatabase){
+
+    setTaskDatabase(taskDatabase) {
         this.taskDatabase = taskDatabase;
+        this.saveTaskDatabase();
     }
-    setUserPrefDatabase(userPrefDatabase){
+
+    setUserPrefDatabase(userPrefDatabase) {
         this.userPrefDatabase = userPrefDatabase;
+        this.saveUserPrefDatabase();
+    }
+
+    foundAssignments(assignmentsList) {
+        console.log('AssignmentsList: ');
+        console.table(assignmentsList);
+
+        // Call the updateCourseDatabase method to update the course database with the assignments
+        this.updateCourseDatabase(assignmentsList);
+
+        // Then show the main menu
+        this.showMainMenu();
+    }
+
+    missingAssignments() {
+        alert('Error finding all of the assignments.');
+        this.showUserSetup();
+    }
+
+    // Update the course database with new or modified courses and their assignments
+    updateCourseDatabase(assignmentsList) {
+        let currentCourseName = null;
+        let currentCourse = null;  // Keep track of the current course
+
+        assignmentsList.forEach(assignment => {
+            console.log('Looking for course:', assignment.course);  // Verify course name
+
+            // If the course is different, handle it
+            if (assignment.course !== currentCourseName) {
+                console.log('Moving to another course...');
+                currentCourseName = assignment.course;
+
+                // Find the course by name from the course database
+                currentCourse = this.courseDatabase.findCourseByName(assignment.course);
+
+                // If the course is not found, create a new one and add it to the CourseDatabase
+                if (!currentCourse) {
+                    console.log(`Course not found. Creating new course: ${assignment.course}`);
+                    currentCourse = new Course(assignment.course);  // Create new Course instance
+                    this.courseDatabase.addCourse(currentCourse);  // Add the new course to the database
+                } else {
+                    console.log(`Course found: ${currentCourse.name}`);
+                }
+            }
+
+            // Now add the assignment to the course
+            console.log('Adding assignment to course:', currentCourse.getName());
+
+            // Add the assignment using the `addAssignment` method on the Course instance
+            currentCourse.addAssignment({
+                name: assignment.name,
+                dueDate: assignment.due_date,
+                taskType: assignment.taskType,
+                gradeWeight: assignment.gradeWeight
+            });
+
+            console.log('Assignment:', assignment);
+        });
+
+        // After updating the courses, save the course database
+        console.table(this.courseDatabase); // Verify the updated state of the CourseDatabase
+        this.saveCourseDatabase();
+    }
+
+    // Save the updated course database to chrome storage
+    saveCourseDatabase() {
+        chrome.storage.local.set({ courseDatabase: this.courseDatabase }, () => {
+            console.log("Course database saved successfully");
+        });
+    }
+
+    saveUserPrefDatabase() {
+        chrome.storage.local.set({ userPrefDatabase: this.userPrefDatabase }, () => {
+            console.log("User preferences database saved successfully");
+        });
     }
 }

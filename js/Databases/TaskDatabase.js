@@ -1,26 +1,19 @@
 class TaskDatabase {
+    #tasks;
     constructor() {
-        this.tasks = []; 
+        this.#tasks = [];  // Stores all the tasks
     }
 
-    addTask(taskName, dueDate, course, compTime, taskType) {
-        const newTask = new Task(taskName, dueDate, course, compTime, taskType);
-        this.tasks.push(newTask);
+    addAssignment(task) {
+        if (task instanceof Task) {
+            console.log(`Adding task: ${task.name}`);
+            this.#tasks.push(task);  // Add task to the tasks array
+        } else {
+            console.error('Invalid task:', task);
+        }
     }
 
-    deleteTask(taskName) {
-        this.tasks = this.tasks.filter(task => task.getTaskName() !== taskName);
-    }
-
-    getTaskByNameAndCourse(taskName, course) {
-        return this.tasks.find(task => task.getTaskName() === taskName && task.getCourse() === course) || null;
-    }
-
-    getAllTasks() {
-        return this.tasks;
-    }
-
-    checkForExistingTask(taskName, course) {
-        return this.tasks.some(task => task.getTaskName() === taskName && task.getCourse() === course) ? 1 : -1;
+    getTasks() {
+        return this.#tasks;  // Return all tasks
     }
 }

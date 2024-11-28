@@ -1,6 +1,5 @@
 class UserSetup {
-    constructor(Master, userInterface) {
-        this.Master = Master;
+    constructor(userInterface) {
         this.userInterface = userInterface;
         this.render();
     }
@@ -19,6 +18,7 @@ class UserSetup {
                 <input type="text" id="inputField" placeholder="Enter canvas API access token..." />
                 <input type="text" id="savedField" placeholder="Previous entry" readonly />
                 <button id="saveButton">Save</button>
+                <span id="loadingIndicator" style="display: none; margin-left: 10px;">Loading...</span>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', userSetupHTML);
@@ -38,8 +38,12 @@ class UserSetup {
         const inputText = document.getElementById('inputField').value;
 
         if (inputText) {
+            // Show the "loading..." message next to the save button
+            document.getElementById('loadingIndicator').style.display = 'inline';
+
             // Pass the inputText (token) to UserInterface for validation and saving
             this.userInterface.userTryingToSaveAccessToken(inputText);
+
         } else {
             alert("Please enter a value.");
         }

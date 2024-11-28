@@ -1,15 +1,13 @@
 class MainMenu {
-    master;
     accessToken;
     userInterface;
     courseDatabase;
-    taskDatabase;
     userPrefDatabase;
     formula;
 
-    constructor(master, accessToken, userInterface) {
+    constructor(accessToken, userInterface) {
+        console.log('MainMenu instantiated');
         this.accessToken = accessToken;
-        this.master = master;
         this.userInterface = userInterface;
         // Check and initialize courseDatabase if necessary
         this.courseDatabase = this.userInterface.getCourseDatabase();
@@ -17,14 +15,6 @@ class MainMenu {
             this.courseDatabase = new CourseDatabase();
             this.userInterface.setCourseDatabase(this.courseDatabase);
         }
-
-        // Check and initialize taskDatabase if necessary
-        this.taskDatabase = this.userInterface.getTaskDatabase();
-        if (this.taskDatabase == null) {
-            this.taskDatabase = new TaskDatabase();
-            this.userInterface.setTaskDatabase(this.taskDatabase);
-        }
-
         // Check and initialize userPrefDatabase if necessary
         this.userPrefDatabase = this.userInterface.getUserPrefDatabase();
         if (this.userPrefDatabase == null) {
@@ -42,11 +32,21 @@ class MainMenu {
         if (existingContainer) {
             existingContainer.remove();
         }
-
         // Insert HTML for Main Menu with collapsible sections
         const mainMenuHTML = `
             <div id="mainMenuContainer">
                 <h2>Main Menu</h2>
+
+                <!-- Task List (Non-Collapsible) -->
+                <div id="taskList">
+                    <h3>Task List</h3>
+                    <table id="taskTable" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr id="tableHeaders"></tr>
+                        </thead>
+                        <tbody id="taskTableBody"></tbody>
+                    </table>
+                </div>
 
                 <!-- Collapsible Menu 1 -->
                 <details id="menu1">
@@ -163,6 +163,7 @@ class MainMenu {
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
         this.populateUserPreferences();
         this.addEventListeners();
+        this.updateTaskList();
     }
 
     addEventListeners() {
@@ -206,7 +207,6 @@ class MainMenu {
             } else {
                 alert("Please enter a valid number greater than 0 for the number of tasks.");
             }
-
             if (numTasksValid) {
                 // Set the boolean values from the checkboxes
                 this.userPrefDatabase.setPriorityNumBool(document.getElementById('priorityNumCheck').checked);
@@ -226,11 +226,8 @@ class MainMenu {
                 this.saveUserPref();
             }
         });
-
-
-
-
     }
+
     populateUserPreferences() {
         console.log('Populating the user preferences html elements.');
         // Set the number of tasks using the getter
@@ -252,29 +249,98 @@ class MainMenu {
         document.getElementById('essayCheck').checked = this.userPrefDatabase.getEssayBool();
         document.getElementById('allCheck').checked = this.userPrefDatabase.getAllBool();
     }
+
     saveUserPref() {
         chrome.storage.local.set({userPrefDatabase: this.userPrefDatabase}, () => {
             console.log("Saving User Preferences...")
             console.table(this.userPrefDatabase);
         });
+        this.updateTaskList();
     }
 
     saveData() {
         chrome.storage.local.set({
             accessToken: this.accessToken,
             courseDatabase: this.courseDatabase,
-            taskDatabase: this.taskDatabase,
             userPrefDatabase: this.userPrefDatabase
         }, () => {
         });
     }
 
     updateTaskList() {
-        this.formula = new Formula(this.userPrefDatabase, this.taskDatabase)
+        const numTasks = this.userPrefDatabase.getNumTasks();
+        const tasksToDisplay = this.courseDatabase.getTasks().slice(0, numTasks);  // Fetch tasks to display
+
+        const tableHeaders = document.getElementById('tableHeaders');
+        const tableBody = document.getElementById('taskTableBody');
+        const userPrefs = this.userPrefDatabase;
+
+        // Clear existing table content
+        tableHeaders.innerHTML = '';
+        tableBody.innerHTML = '';
+
+        // Generate table headers based on user preferences
+        const headers = [];
+        if (userPrefs.getPriorityNumBool()) headers.push('#');
+        if (userPrefs.getTaskNameBool()) headers.push('Task');
+        if (userPrefs.getCourseBool()) headers.push('Course');
+        if (userPrefs.getDoneDateBool()) headers.push('Done Date');
+        if (userPrefs.getProgressBool()) headers.push('Progress');
+        if (userPrefs.getDueDateBool()) headers.push('Due Date');
+        if (userPrefs.getWeightBool()) headers.push('Weight');
+
+        // Create table header cells
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            tableHeaders.appendChild(th);
+        });
+        const charLimit = 20;
+        // Populate table rows with tasks
+        tasksToDisplay.forEach((task, index) => {
+            const tr = document.createElement('tr');
+
+            headers.forEach(header => {
+                const td = document.createElement('td');
+
+                // Map header names to task properties dynamically
+                let taskValue = '';
+                switch (header) {
+                    case '#':
+                        taskValue =  (index + 1) || '';
+                        break;
+                    case 'Task':
+                        taskValue = task.getName() || '';
+                        break;
+                    case 'Course':
+                        taskValue = task.getCourseName() || '';
+                        break;
+                    case 'Done Date':
+                        taskValue = task.getDoneDate() || ''; // If applicable
+                        break;
+                    case 'Progress':
+                        taskValue = task.getProgress() || ''; // Assuming you have a progress property
+                        break;
+                    case 'Due Date':
+                        taskValue = task.getDueDate() || '';
+                        break;
+                    case 'Weight':
+                        taskValue = task.getGradeWeight() || '';
+                        break;
+                    default:
+                        taskValue = ''; // Fallback if no matching property
+                }
+                if (taskValue.length > charLimit) {
+                    taskValue = taskValue.substring(0, charLimit) + '...';  // Truncate and add ellipsis
+                }
+
+                td.textContent = taskValue;
+                tr.appendChild(td);
+            });
+
+            tableBody.appendChild(tr);
+        });
     }
 
-    isInteger(str) {
-        const num = parseInt(str, 10); // Parse string to integer (base 10)
-        return !isNaN(num) && num.toString() === str.trim(); // Ensure the number equals the string
-    }
+
 }
