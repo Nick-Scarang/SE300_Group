@@ -204,7 +204,9 @@ class MainMenu {
 
         this.displayCourses();
 
-
+        document.getElementById('saveSelectedCourses').addEventListener('click', () => {
+            this.saveSelectedCourses();
+        });
 
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
         this.populateUserPreferences();
