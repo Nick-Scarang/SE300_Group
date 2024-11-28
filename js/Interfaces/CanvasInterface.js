@@ -187,12 +187,12 @@ class CanvasInterface {
         return group.name;
     }
 
-    // Map assignment group ID to grade weight (use `group_weight`)
+    // Map assignment group ID to grade weight (use group_weight)
     getGradeWeightForAssignment(assignmentGroupId, assignmentGroups) {
         const group = assignmentGroups.find(group => group.id === assignmentGroupId);
         if (!group) return 0; // Return 0 if no matching assignment group is found
 
-        // Return the grade weight (from `group_weight`) associated with the assignment group
+        // Return the grade weight (from group_weight) associated with the assignment group
         return group.group_weight || 0;
     }
 }

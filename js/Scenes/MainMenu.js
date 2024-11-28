@@ -139,7 +139,7 @@ class MainMenu {
                 </details>
                 
 
-<!-- User Setup -->
+                <!-- User Setup -->
                 <details id="UserSetup">
                     <summary>User Setup:</summary>
                     <div>
