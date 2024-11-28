@@ -43,7 +43,6 @@ class UserSetup {
 
             // Pass the inputText (token) to UserInterface for validation and saving
             this.userInterface.userTryingToSaveAccessToken(inputText);
-
         } else {
             alert("Please enter a value.");
         }
