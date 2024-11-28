@@ -5,8 +5,9 @@ class MainMenu {
     userPrefDatabase;
     formula;
 
-    constructor(accessToken, userInterface) {
+    constructor(canvasInterface, accessToken, userInterface) {
         console.log('MainMenu instantiated');
+        this.canvasInterface = canvasInterface;
         this.accessToken = accessToken;
         this.userInterface = userInterface;
         // Check and initialize courseDatabase if necessary
@@ -160,11 +161,59 @@ class MainMenu {
                 </details>
             </div>
         `;
+
+        this.displayCourses();
+
+        document.getElementById('saveSelectedCourses').addEventListener('click', () => {
+            this.saveSelectedCourses();
+        });
+        
         document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
         this.populateUserPreferences();
         this.addEventListeners();
         this.updateTaskList();
     }
+
+    displayCourses() {
+        const courseContainer = document.getElementById('courseContainer');
+        const courses = this.canvasInterface.courses;
+
+        if (!courses || courses.length === 0) {
+            courseContainer.innerHTML = '<p>No courses found. Please refresh or check your API settings.</p>';
+            return;
+        }
+
+        courseContainer.innerHTML = '';
+
+        courses.forEach((course) => {
+            const button = document.createElement('button');
+            button.textContent = course.name || `Course ${course.id}`;
+            button.dataset.courseId = course.id;
+            button.classList.add('course-button');
+
+            button.addEventListener('click', () => {
+                button.classList.toggle('selected');
+            });
+
+            courseContainer.appendChild(button);
+        });
+    }
+
+    saveSelectedCourses() {
+        const selectedButtons = document.querySelectorAll('.course-button.selected');
+        const selectedCourses = Array.from(selectedButtons).map(button => {
+            const courseId = button.dataset.courseId;
+            return this.canvasInterface.courses.find(course => course.id == courseId);
+        });
+
+        this.canvasInterface.courses = selectedCourses;
+
+        const selectedCoursesOutput = document.getElementById('selectedCoursesOutput');
+        selectedCoursesOutput.innerHTML = '<h3>Selected Courses:</h3>' +
+            selectedCourses.map(course => `<p>${course.name}</p>`).join('');
+    }
+
+
 
     addEventListeners() {
         // Add event listener for the edit button

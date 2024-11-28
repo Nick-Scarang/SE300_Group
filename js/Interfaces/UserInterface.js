@@ -5,7 +5,8 @@ class UserInterface {
     userPrefDatabase;
     courseList;
 
-    constructor() {
+    constructor(canvasInterface) {
+        this.canvasInterface = canvasInterface;
         this.loadSavedData();
     }
 
@@ -51,7 +52,7 @@ class UserInterface {
 
     showMainMenu() {
         this.clearExistingUI();
-        new MainMenu(this.accessToken, this);
+        new MainMenu(this.canvasInterface, this.accessToken, this);
     }
 
     clearExistingUI() {
