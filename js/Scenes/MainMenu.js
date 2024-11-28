@@ -4,11 +4,13 @@ class MainMenu {
     courseDatabase;
     userPrefDatabase;
     formula;
+    Master;
 
-    constructor(accessToken, userInterface) {
+    constructor(accessToken, userInterface, master) {
         console.log('MainMenu instantiated');
         this.accessToken = accessToken;
         this.userInterface = userInterface;
+        this.Master = master;
         // Check and initialize courseDatabase if necessary
         this.courseDatabase = this.userInterface.getCourseDatabase();
         if (this.courseDatabase == null) {
