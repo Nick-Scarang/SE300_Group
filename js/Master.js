@@ -1,6 +1,5 @@
 class Master {
     UI;
-    CI;
     static main() {
         const instance = new Master();
         instance.initialize();
@@ -8,12 +7,6 @@ class Master {
     initialize() {
         console.log("Master class initialized");
         this.UI = new UserInterface();
-        this.CI = new CanvasInterface();
-
-        this.CI.fetchCourses().then(() => {
-            console.log('Courses fetched:', this.CI.courses);
-            this.UI.showMainMenu();
-        });
     }
 }
 Master.main();
