@@ -14,24 +14,14 @@ class Master {
 
     // Example method to initialize the application
     CI;
-    UI;
     initialize() {
         this.CI = new CanvasInterface();
-        this.UI = new UserInterface(this);
 
         this.CI.fetchCourses().then(() => {
             console.log('Courses fetched:', this.CI.courses);
-            this.UI.showMainMenu();
+            const userInterface = new UserInterface(this.CI);
+            userInterface.showMainMenu();
         });
-    }
-    checkToken(){
-
-    }
-    updateDatabases(){
-
-    }
-    getCanvasInterface(){
-        return this.CI;
     }
 }
 

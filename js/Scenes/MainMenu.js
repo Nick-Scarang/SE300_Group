@@ -1,9 +1,9 @@
 class MainMenu {
     accessToken;
     Master;
-    constructor(Master, accessToken, userInterface) {
+    constructor(canvasInterface, accessToken, userInterface) {
+        this.canvasInterface = canvasInterface;
         this.accessToken = accessToken;
-        this.Master = Master;
         this.userInterface = userInterface
         this.render();
     }
@@ -152,7 +152,7 @@ class MainMenu {
 
     displayCourses() {
         const courseContainer = document.getElementById('courseContainer');
-        const courses = this.Master.getCanvasInterface().courses;
+        const courses = this.canvasInterface.courses;
     
         if (!courses || courses.length === 0) {
             courseContainer.innerHTML = '<p>No courses found. Please refresh or check your API settings.</p>';
@@ -180,10 +180,10 @@ class MainMenu {
         const selectedButtons = document.querySelectorAll('.course-button.selected');
         const selectedCourses = Array.from(selectedButtons).map(button => {
             const courseId = button.dataset.courseId;
-            return this.Master.getCanvasInterface().courses.find(course => course.id == courseId);
+            return this.canvasInterface.courses.find(course => course.id == courseId);
         });
     
-        this.Master.getCanvasInterface().courses = selectedCourses;
+        this.canvasInterface.courses = selectedCourses;
     
         const selectedCoursesOutput = document.getElementById('selectedCoursesOutput');
         selectedCoursesOutput.innerHTML = '<h3>Selected Courses:</h3>' +

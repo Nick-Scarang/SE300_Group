@@ -1,8 +1,7 @@
 class UserInterface {
-    Master;
     accessToken;
-    constructor(Master) {
-        this.Master = Master;
+    constructor(canvasInterface) {
+        this.canvasInterface = canvasInterface;
         this.loadSavedData();
     }
 
@@ -28,7 +27,7 @@ class UserInterface {
         // Clear any existing UI
         this.clearExistingUI();
         // Create MainMenu UI
-        new MainMenu(this.Master, this.accessToken, this);
+        new MainMenu(this.canvasInterface, this.accessToken, this);
     }
 
     clearExistingUI() {
