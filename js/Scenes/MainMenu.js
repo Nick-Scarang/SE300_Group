@@ -1,6 +1,5 @@
 class MainMenu {
     accessToken;
-    Master;
     constructor(canvasInterface, accessToken, userInterface) {
         this.canvasInterface = canvasInterface;
         this.accessToken = accessToken;
