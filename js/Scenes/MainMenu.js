@@ -139,16 +139,58 @@ class MainMenu {
                 </details>
                 
 
-                <!-- Collapsible Menu 4 -->
-                <details id="menu4">
-                    <summary>Upload Syllabus</summary>
+<!-- User Setup -->
+                <details id="UserSetup">
+                    <summary>User Setup:</summary>
                     <div>
-                <input type="file" id="fileInput" accept="image/*" />
-                <button id="processButton">Process Syllabus</button>
-                <div id="output"></div>
-                <div id="assignments"></div>
+
+                    <!-- Confirm Courses in User Setup -->
+                    <details id="confirmCourses">
+                        <summary>Confirm Courses:</summary>
+                        <div>
+                            <summary>Below are all your Canvas courses. We have</summary> 
+                            <summary>preselected the courses we think you are </summary>
+                            <summary>currently in. Please deselect the courses </summary>
+                            <summary>you don't want and select the courses you do.</summary>
+                            <div id = "courseContainer"></div>
+                            <button id="saveSelectedCourses">Save Selected Courses</button>
+                            <div id = "selectedCoursesOutput"></div>
+                        </div>
+                    </details>
+
+
+                    <!-- Upload Syllabi in User Setup -->
+                    <details id="UploadSyllabi">
+                        <summary>Upload Syllabi:</summary>
+                        <div>
+                            <input type="file" id="fileInput" accept="image/*" />
+                            <button id="processButton">Process Syllabus</button>
+                            <div id="output"></div>
+                            <div id="assignments"></div>
+                        </div>
+                    </details>
+
+
+                    <!-- Late Work Preference in User Setup -->
+                    <details id="menu4LateWork">
+                        <summary>Late Work Preferences:</summary>
+                        <div>
+                            <button id="saveCourses">Save Courses</button>
+                        </div>
+                    </details>
+
+
+                    <!-- Set Done Date in User Setup -->
+                    <details id="menu4">
+                        <summary>Set Done Date:</summary>
+                        <div>
+                            <button id="saveCourses">Save Courses</button>
+                        </div>
+                    </details>
+
                     </div>
                 </details>
+
 
                 <!-- Collapsible Menu 5 -->
                 <details id="menu5">
@@ -162,13 +204,16 @@ class MainMenu {
             </div>
         `;
 
+        
+        document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
+
         this.displayCourses();
 
         document.getElementById('saveSelectedCourses').addEventListener('click', () => {
             this.saveSelectedCourses();
         });
-        
-        document.body.insertAdjacentHTML('beforeend', mainMenuHTML);
+
+
         this.populateUserPreferences();
         this.addEventListeners();
         this.updateTaskList();
