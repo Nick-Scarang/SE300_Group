@@ -42,3 +42,17 @@ h2 {
     margin: 0 0 10px 0;
 }
 
+.course-button {
+    margin: 5px;
+    padding: 10px;
+    background-color: lightgray;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.course-button.selected {
+    background-color: lightblue;
+    font-weight: bold;
+}
+

@@ -51,53 +51,53 @@ class MainMenu {
                 </details>
 
                 <!-- User Setup -->
-                <details id="menu4">
+                <details id="UserSetup">
                     <summary>User Setup:</summary>
                     <div>
 
                     <!-- Confirm Courses in User Setup -->
-                <details id="confirmCourses">
-                    <summary>Confirm Courses:</summary>
-                    <div>
-                        <summary>Below are all your Canvas courses. We have</summary> 
-                        <summary>preselected the courses we think you are </summary>
-                        <summary>currently in. Please deselect the courses </summary>
-                        <summary>you don't want and select the courses you do.</summary>
-                        <div id = "courseContainer"></div>
-                        <button id="saveSelectedCourses">Save Selected Courses</button>
-                        <div id = "selectedCoursesOutput"></div>
-                    </div>
-                </details>
+                    <details id="confirmCourses">
+                        <summary>Confirm Courses:</summary>
+                        <div>
+                            <summary>Below are all your Canvas courses. We have</summary> 
+                            <summary>preselected the courses we think you are </summary>
+                            <summary>currently in. Please deselect the courses </summary>
+                            <summary>you don't want and select the courses you do.</summary>
+                            <div id = "courseContainer"></div>
+                            <button id="saveSelectedCourses">Save Selected Courses</button>
+                            <div id = "selectedCoursesOutput"></div>
+                        </div>
+                    </details>
 
 
-                <!-- Upload Syllabi in User Setup -->
-                <details id="menu4">
-                    <summary>Upload Syllabi:</summary>
-                    <div>
-                <input type="file" id="fileInput" accept="image/*" />
-                <button id="processButton">Process Syllabus</button>
-                    <div id="output"></div>
-                    <div id="assignments"></div>
-                </details>
+                    <!-- Upload Syllabi in User Setup -->
+                    <details id="UploadSyllabi">
+                        <summary>Upload Syllabi:</summary>
+                        <div>
+                            <input type="file" id="fileInput" accept="image/*" />
+                            <button id="processButton">Process Syllabus</button>
+                            <div id="output"></div>
+                            <div id="assignments"></div>
+                        </div>
+                    </details>
 
 
-                <!-- Late Work Preference in User Setup -->
-                <details id="menu4">
-                    <summary>Late Work Preferences:</summary>
-                    <div>
-                <button id="saveCourses">Save Courses</button>
-                    </div>
-                </details>
+                    <!-- Late Work Preference in User Setup -->
+                    <details id="menu4LateWork">
+                        <summary>Late Work Preferences:</summary>
+                        <div>
+                            <button id="saveCourses">Save Courses</button>
+                        </div>
+                    </details>
 
 
-                <!-- Set Done Date in User Setup -->
-                <details id="menu4">
-                    <summary>Set Done Date:</summary>
-                    <div>
-                <button id="saveCourses">Save Courses</button>
-                    </div>
-                </details>
-
+                    <!-- Set Done Date in User Setup -->
+                    <details id="menu4">
+                        <summary>Set Done Date:</summary>
+                        <div>
+                            <button id="saveCourses">Save Courses</button>
+                        </div>
+                    </details>
 
                     </div>
                 </details>
@@ -122,17 +122,14 @@ class MainMenu {
             this.saveSelectedCourses();
         });
 
-        // Add event listener for the edit button
-        document.getElementById('editButton').addEventListener('click', () => {
-            // On edit button click, go to user setup without causing a loop
-            this.userInterface.showUserSetup();
-        });
 
         document.getElementById('processButton').addEventListener('click', async () => {
             const fileInput = document.getElementById('fileInput');
+            console.log("hello");
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 try {
+                    console.log("hello1");
                     const assignments = await TesseractHandler.processImage(file);
 
                     if (assignments && assignments.length > 0) {
