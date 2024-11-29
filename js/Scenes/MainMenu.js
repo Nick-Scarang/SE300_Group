@@ -4,6 +4,7 @@ class MainMenu {
     courseDatabase;
     userPrefDatabase;
     formula;
+    selectedCourses = [];
 
     constructor(canvasInterface, accessToken, userInterface) {
         console.log('MainMenu instantiated');
@@ -246,16 +247,18 @@ class MainMenu {
 
     saveSelectedCourses() {
         const selectedButtons = document.querySelectorAll('.course-button.selected');
-        const selectedCourses = Array.from(selectedButtons).map(button => {
+        this.selectedCourses = Array.from(selectedButtons).map(button => {
             const courseId = button.dataset.courseId;
             return this.canvasInterface.courses.find(course => course.id == courseId);
         });
 
-        this.canvasInterface.courses = selectedCourses;
+        //this.canvasInterface.courses = selectedCourses;
 
         const selectedCoursesOutput = document.getElementById('selectedCoursesOutput');
         selectedCoursesOutput.innerHTML = '<h3>Selected Courses:</h3>' +
-            selectedCourses.map(course => `<p>${course.name}</p>`).join('');
+            this.selectedCourses.map(course => `<p>${course.name}</p>`).join('');
+
+            this.updateTaskList();
     }
 
 
@@ -363,7 +366,28 @@ class MainMenu {
 
     updateTaskList() {
         const numTasks = this.userPrefDatabase.getNumTasks();
-        const tasksToDisplay = this.courseDatabase.getTasks().slice(0, numTasks);  // Fetch tasks to display
+        
+        const tasks = this.courseDatabase.getTasks(); // Fetch all tasks
+
+        let tasksToDisplay;
+
+        // If no courses are selected, show all tasks
+        if (this.selectedCourses.length === 0) {
+            tasksToDisplay = tasks;
+        } else {
+            // Filter tasks by selected courses
+            tasksToDisplay = tasks.filter(task => {
+                return this.selectedCourses.some(course => course.name === task.getCourseName());
+            });
+        }
+        // Filter tasks by selected courses
+        //const filteredTasks = tasks.filter(task => {
+            //return this.selectedCourses.some(course => course.name === task.getCourseName());
+        //});
+        
+        //const tasksToDisplay = this.courseDatabase.getTasks().slice(0, numTasks);  // Fetch tasks to display
+
+        //const tasksToDisplay = filteredTasks.slice(0, numTasks);
 
         const tableHeaders = document.getElementById('tableHeaders');
         const tableBody = document.getElementById('taskTableBody');
@@ -391,7 +415,8 @@ class MainMenu {
         });
         const charLimit = 20;
         // Populate table rows with tasks
-        tasksToDisplay.forEach((task, index) => {
+        tasksToDisplay.slice(0, numTasks).forEach((task, index) => {
+        //tasksToDisplay.forEach((task, index) => {
             const tr = document.createElement('tr');
 
             headers.forEach(header => {
@@ -435,6 +460,4 @@ class MainMenu {
             tableBody.appendChild(tr);
         });
     }
-
-
 }
