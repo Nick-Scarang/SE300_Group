@@ -5,6 +5,7 @@ class MainMenu {
     userPrefDatabase;
     formula;
     selectedCourses = [];
+    tasksDisplayed = [];
 
     constructor(canvasInterface, accessToken, userInterface) {
         console.log('MainMenu instantiated');
@@ -182,11 +183,9 @@ class MainMenu {
 
 
                     <!-- Set Done Date in User Setup -->
-                    <details id="menu4">
+                    <details id="doneDate">
                         <summary>Set Done Date:</summary>
-                        <div>
-                            <button id="saveCourses">Save Courses</button>
-                        </div>
+                        <div id  = 'assignmentsContainer'></div>
                     </details>
 
                     </div>
@@ -218,6 +217,7 @@ class MainMenu {
         this.populateUserPreferences();
         this.addEventListeners();
         this.updateTaskList();
+        this.displayAssignmentNames();
     }
 
     displayCourses() {
@@ -245,6 +245,30 @@ class MainMenu {
         });
     }
 
+    displayAssignmentNames(){
+        const assignmentsContainer = document.getElementById('assignmentsContainer');
+        
+        //const tableBody = document.getElementById('menu4LateWork');
+        //tableBody.innerHTML = '';
+        
+        if (this.tasksDisplayed.length === 0) {
+            assignmentsContainer.innerHTML = '<p>No tasks displayed. Please update your task list.</p>';
+            return;
+        }
+
+        assignmentsContainer.innerHTML = '';
+
+        this.tasksDisplayed.forEach(task => {
+            const label = document.createElement('label');
+            label.textContent = task.getName() || `Assignment ${task.getId()}`; // Customize how you want to display task info
+            
+            // Append the label to the assignments container
+            assignmentsContainer.appendChild(label);
+        });
+
+
+    }
+
     saveSelectedCourses() {
         const selectedButtons = document.querySelectorAll('.course-button.selected');
         this.selectedCourses = Array.from(selectedButtons).map(button => {
@@ -259,9 +283,8 @@ class MainMenu {
             this.selectedCourses.map(course => `<p>${course.name}</p>`).join('');
 
             this.updateTaskList();
+            this.displayAssignmentNames();
     }
-
-
 
     addEventListeners() {
         // Add event listener for the edit button
@@ -353,6 +376,7 @@ class MainMenu {
             console.table(this.userPrefDatabase);
         });
         this.updateTaskList();
+        this.displayAssignmentNames();
     }
 
     saveData() {
@@ -380,6 +404,8 @@ class MainMenu {
                 return this.selectedCourses.some(course => course.name === task.getCourseName());
             });
         }
+
+        this.tasksDisplayed = tasksToDisplay.slice(0, numTasks);
         // Filter tasks by selected courses
         //const filteredTasks = tasks.filter(task => {
             //return this.selectedCourses.some(course => course.name === task.getCourseName());
@@ -415,8 +441,9 @@ class MainMenu {
         });
         const charLimit = 20;
         // Populate table rows with tasks
+            //this.tasksDisplayed.forEach((task, index) => {
         tasksToDisplay.slice(0, numTasks).forEach((task, index) => {
-        //tasksToDisplay.forEach((task, index) => {
+            //tasksToDisplay.forEach((task, index) => {
             const tr = document.createElement('tr');
 
             headers.forEach(header => {
@@ -459,5 +486,7 @@ class MainMenu {
 
             tableBody.appendChild(tr);
         });
+
+        
     }
 }
