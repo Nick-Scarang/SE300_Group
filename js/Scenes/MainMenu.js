@@ -248,8 +248,7 @@ class MainMenu {
     displayAssignmentNames(){
         const assignmentsContainer = document.getElementById('assignmentsContainer');
         
-        //const tableBody = document.getElementById('menu4LateWork');
-        //tableBody.innerHTML = '';
+
         
         if (this.tasksDisplayed.length === 0) {
             assignmentsContainer.innerHTML = '<p>No tasks displayed. Please update your task list.</p>';
@@ -258,12 +257,57 @@ class MainMenu {
 
         assignmentsContainer.innerHTML = '';
 
+        const saveButton = document.createElement('button');
+        saveButton.textContent = 'Save Changes';
+        saveButton.classList.add('save-button');
+
+        saveButton.addEventListener('click', () => { 
+            const textboxes = document.querySelectorAll('.done-date-textbox'); // Select all textboxes by a common class
+            textboxes.forEach((textbox, index) => {
+                const newDoneDate = textbox.value.trim();
+                if (newDoneDate) {
+                    const task = this.tasksDisplayed[index]; // Match the task based on its index in tasksDisplayed
+                    task.setDoneDate(newDoneDate); // Save the new done date to the task object
+                    console.log(`Task updated with done date: ${newDoneDate}`);
+                }
+            });
+            this.updateTaskList(); // Re-render the task list with updated data
+        });
+
+        assignmentsContainer.appendChild(saveButton);
+
         this.tasksDisplayed.forEach(task => {
+            //new
+            const taskContainer = document.createElement('div');
+            taskContainer.classList.add('task-container');
+            //new
+
             const label = document.createElement('label');
             label.textContent = task.getName() || `Assignment ${task.getId()}`; // Customize how you want to display task info
-            
+            label.classList.add('assignment-label');
+
+            const textbox = document.createElement('input');
+            textbox.type = 'text';
+            textbox.placeholder = 'MM/DD';
+            textbox.classList.add('done-date-input');
+
+            const initialDoneDate = task.getDoneDate();
+            if (initialDoneDate){
+                textbox.value = initialDoneDate;
+            }
+
+            textbox.addEventListener('change', (event) => {
+                const newDoneDate = event.target.value;
+                task.setDoneDate(newDoneDate); // Save the date in the task object
+                //console.log(`Saved done date for task ${task.getId()}: ${newDoneDate}`); // Debugging log
+            });
+
+            taskContainer.appendChild(label);
+            taskContainer.appendChild(textbox);
+
             // Append the label to the assignments container
-            assignmentsContainer.appendChild(label);
+            //assignmentsContainer.appendChild(label);
+            assignmentsContainer.appendChild(taskContainer);
         });
 
 
