@@ -530,7 +530,5 @@ class MainMenu {
 
             tableBody.appendChild(tr);
         });
-
-        
     }
 }
