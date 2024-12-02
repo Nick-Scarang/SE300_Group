@@ -145,7 +145,6 @@ class UserInterface {
 
     // Update the course database with new or modified courses and their assignments
     updateCourseDatabase(assignmentsList) {
-        let currentCourseName = null;
         let currentCourse = null;  // Track the current course
 
         assignmentsList.forEach(assignment => {
@@ -160,13 +159,17 @@ class UserInterface {
                 currentCourse = this.courseDatabase.findCourseByName(assignment.course);
 
                 // If the course is not found, create a new one
-                if (!currentCourse) {
+                if (currentCourse) {
+                    console.log(`Course found: ${currentCourse.name}`);
+                    console.log('Course visibility: ', currentCourse.getVisibility());
+                } else {
                     console.log(`Course not found. Creating new course: ${assignment.course}`);
                     currentCourse = new Course(assignment.course);
                     this.courseDatabase.addCourse(currentCourse);
-                } else {
-                    console.log(`Course found: ${currentCourse.name}`);
                 }
+            }
+            if (!this.courseDatabase.doesThisCourseExist(assignment.course)){
+                currentCourse = this.courseDatabase.addCourseByName(assignment.course);
             }
 
             // Add the assignment to the current course

@@ -2,6 +2,7 @@ class Course {
     #name;
     #assignmentGroups;
     #taskDatabase;
+    #visibility = true;
 
     constructor(name) {
         this.#name = name;
@@ -45,5 +46,14 @@ class Course {
 
     getName() {
         return this.#name;
+    }
+    getVisibility(){
+        return this.#visibility;
+    }
+    setVisibility(bool){
+        this.#visibility = bool;
+    }
+    toggleVisibility(){
+        this.#visibility = !this.#visibility;
     }
 }

@@ -209,11 +209,6 @@ class MainMenu {
 
         this.displayCourses();
 
-        document.getElementById('saveSelectedCourses').addEventListener('click', () => {
-            this.saveSelectedCourses();
-        });
-
-
         this.populateUserPreferences();
         this.addEventListeners();
         this.updateTaskList();
@@ -222,34 +217,30 @@ class MainMenu {
 
     displayCourses() {
         const courseContainer = document.getElementById('courseContainer');
-        const courses = this.canvasInterface.courses;
-
+        let courses = this.courseDatabase.getAllCourses();
         if (!courses || courses.length === 0) {
             courseContainer.innerHTML = '<p>No courses found. Please refresh or check your API settings.</p>';
             return;
         }
-
         courseContainer.innerHTML = '';
-
         courses.forEach((course) => {
             const button = document.createElement('button');
-            button.textContent = course.name || `Course ${course.id}`;
-            button.dataset.courseId = course.id;
+            button.textContent = course.getName();
             button.classList.add('course-button');
-
+            button.classList.toggle('selected', course.getVisibility());
+            console.log('Set the course buttons toggle to: ', course.getVisibility());
             button.addEventListener('click', () => {
                 button.classList.toggle('selected');
+                course.toggleVisibility();
+                console.log('Updated Course: ', course.getName());
             });
-
             courseContainer.appendChild(button);
         });
     }
 
     displayAssignmentNames(){
         const assignmentsContainer = document.getElementById('assignmentsContainer');
-        
 
-        
         if (this.tasksDisplayed.length === 0) {
             assignmentsContainer.innerHTML = '<p>No tasks displayed. Please update your task list.</p>';
             return;
@@ -313,24 +304,11 @@ class MainMenu {
 
     }
 
-    saveSelectedCourses() {
-        const selectedButtons = document.querySelectorAll('.course-button.selected');
-        this.selectedCourses = Array.from(selectedButtons).map(button => {
-            const courseId = button.dataset.courseId;
-            return this.canvasInterface.courses.find(course => course.id == courseId);
-        });
-
-        //this.canvasInterface.courses = selectedCourses;
-
-        const selectedCoursesOutput = document.getElementById('selectedCoursesOutput');
-        selectedCoursesOutput.innerHTML = '<h3>Selected Courses:</h3>' +
-            this.selectedCourses.map(course => `<p>${course.name}</p>`).join('');
-
-            this.updateTaskList();
-            this.displayAssignmentNames();
-    }
 
     addEventListeners() {
+        document.getElementById('saveSelectedCourses').addEventListener('click', () => {
+            this.saveData();
+        });
         // Add event listener for the edit button
         document.getElementById('editButton').addEventListener('click', () => {
             // On edit button click, go to user setup without causing a loop
