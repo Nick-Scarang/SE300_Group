@@ -53,7 +53,6 @@ class CourseDatabase {
     getAllCourses() {
         return this.courses;
     }
-
     // Check if a course exists by name
     doesThisCourseExist(name) {
         for (let i = 0; i < this.courses.length; i++) {

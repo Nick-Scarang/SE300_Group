@@ -6,11 +6,11 @@ class Task {
     completionTime;
     taskType;
     gradeWeight;
-    progress;
+    progress = 0;
     doneDate;
 
     // Initialize the Task with the necessary values
-    initialize(name, dueDate, courseName, taskType, gradeWeight, progress = null, doneDate = null) {
+    initialize(name, dueDate, courseName, taskType, gradeWeight, progress = 0, doneDate = null) {
         this.name = name;  // Task name
         this.dueDate = dueDate;  // Task due date
         this.courseName = courseName;  // Associated course name
@@ -54,6 +54,8 @@ class Task {
             }
             if (data.progress !== undefined) {
                 this.progress = data.progress;
+            } else {
+                this.progress = 0;
             }
             if (data.doneDate !== undefined) {
                 this.doneDate = data.doneDate;

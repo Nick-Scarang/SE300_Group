@@ -4,8 +4,6 @@ class MainMenu {
     courseDatabase;
     userPrefDatabase;
     formula;
-    selectedCourses = [];
-    tasksDisplayed = [];
 
     constructor(accessToken, userInterface, courseDatabase, userPrefDatabase) {
         console.log('MainMenu instantiated');
@@ -14,7 +12,7 @@ class MainMenu {
         this.userInterface = userInterface;
         this.courseDatabase = courseDatabase;
         this.userPrefDatabase = userPrefDatabase;
-        this.formula = new Formula(CourseDatabase);
+        this.formula = new Formula(courseDatabase);
 
         this.saveData();
         this.render();
@@ -144,16 +142,6 @@ class MainMenu {
                         </div>
                     </details>
 
-
-                    <!-- Late Work Preference in User Setup -->
-                    <details id="menu4LateWork">
-                        <summary>Late Work Preferences:</summary>
-                        <div>
-                            <button id="saveCourses">Save Courses</button>
-                        </div>
-                    </details>
-
-
                     <!-- Set Done Date in User Setup -->
                     <details id="doneDate">
                         <summary>Set Done Date:</summary>
@@ -212,41 +200,39 @@ class MainMenu {
 
     displayAssignmentNames(){
         const assignmentsContainer = document.getElementById('assignmentsContainer');
-
-        if (this.tasksDisplayed.length === 0) {
+        const tasks = this.formula.getTaskList(this.userPrefDatabase.getNumTasks());
+        if (tasks.length === 0) {
             assignmentsContainer.innerHTML = '<p>No tasks displayed. Please update your task list.</p>';
             return;
         }
-
         assignmentsContainer.innerHTML = '';
-
         const saveButton = document.createElement('button');
         saveButton.textContent = 'Save Changes';
         saveButton.classList.add('save-button');
-
         saveButton.addEventListener('click', () => { 
             const textboxes = document.querySelectorAll('.done-date-textbox'); // Select all textboxes by a common class
             textboxes.forEach((textbox, index) => {
                 const newDoneDate = textbox.value.trim();
                 if (newDoneDate) {
-                    const task = this.tasksDisplayed[index]; // Match the task based on its index in tasksDisplayed
+                    const task = tasks[index]; // Match the task based on its index in tasksDisplayed
                     task.setDoneDate(newDoneDate); // Save the new done date to the task object
                     console.log(`Task updated with done date: ${newDoneDate}`);
                 }
             });
             this.updateTaskList(); // Re-render the task list with updated data
+            this.saveData();
         });
 
         assignmentsContainer.appendChild(saveButton);
 
-        this.tasksDisplayed.forEach(task => {
+        tasks.forEach(task => {
             //new
             const taskContainer = document.createElement('div');
             taskContainer.classList.add('task-container');
             //new
 
             const label = document.createElement('label');
-            label.textContent = task.getName() || `Assignment ${task.getId()}`; // Customize how you want to display task info
+            label.textContent = task.getName();
             label.classList.add('assignment-label');
 
             const textbox = document.createElement('input');
@@ -261,15 +247,12 @@ class MainMenu {
 
             textbox.addEventListener('change', (event) => {
                 const newDoneDate = event.target.value;
-                task.setDoneDate(newDoneDate); // Save the date in the task object
-                //console.log(`Saved done date for task ${task.getId()}: ${newDoneDate}`); // Debugging log
+                task.setDoneDate(newDoneDate);
             });
 
             taskContainer.appendChild(label);
             taskContainer.appendChild(textbox);
 
-            // Append the label to the assignments container
-            //assignmentsContainer.appendChild(label);
             assignmentsContainer.appendChild(taskContainer);
         });
 
@@ -279,6 +262,7 @@ class MainMenu {
 
     addEventListeners() {
         document.getElementById('saveSelectedCourses').addEventListener('click', () => {
+            this.updateTaskList();
             this.saveData();
         });
         // Add event listener for the edit button
@@ -385,23 +369,7 @@ class MainMenu {
 
     updateTaskList() {
         const numTasks = this.userPrefDatabase.getNumTasks();
-        
-        const tasks = this.courseDatabase.getTasks(); // Fetch all tasks
-
-        let tasksToDisplay;
-
-        // If no courses are selected, show all tasks
-        if (this.selectedCourses.length === 0) {
-            tasksToDisplay = tasks;
-        } else {
-            // Filter tasks by selected courses
-            tasksToDisplay = tasks.filter(task => {
-                return this.selectedCourses.some(course => course.name === task.getCourseName());
-            });
-        }
-
-        this.tasksDisplayed = tasksToDisplay.slice(0, numTasks);
-
+        let tasksToDisplay = this.formula.getTaskList(numTasks);
         const tableHeaders = document.getElementById('tableHeaders');
         const tableBody = document.getElementById('taskTableBody');
         const userPrefs = this.userPrefDatabase;

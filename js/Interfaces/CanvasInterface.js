@@ -115,22 +115,28 @@ class CanvasInterface {
                             const taskType = this.getTaskTypeForAssignment(assignment.assignment_group_id, assignmentGroups);
                             const gradeWeight = this.getGradeWeightForAssignment(assignment.assignment_group_id, assignmentGroups);
 
-                            // Format the due date with both date and time using Intl.DateTimeFormat
-                            const dateTimeFormat = new Intl.DateTimeFormat('en-US', {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit',
-                                hour12: false // Use 24-hour time format
-                            });
-                            const formattedDueDate = dateTimeFormat.format(new Date(assignment.due_at));
+                            // Format the due date with both date and time using Intl.DateTimeFormat, handling invalid dates
+                            let formattedDueDate = "N/A"; // Default to "N/A"
+                            if (assignment.due_at) {
+                                const dueDate = new Date(assignment.due_at);
+                                if (!isNaN(dueDate.getTime())) { // Check if the date is valid
+                                    const dateTimeFormat = new Intl.DateTimeFormat('en-US', {
+                                        year: 'numeric',
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit',
+                                        hour12: false // Use 24-hour time format
+                                    });
+                                    formattedDueDate = dateTimeFormat.format(dueDate);
+                                }
+                            }
 
                             assignments.push({
                                 name: assignment.name,
                                 course: course.name,
-                                due_date: formattedDueDate, // Store the formatted date and time
+                                due_date: formattedDueDate, // Store the formatted date and time or "N/A"
                                 taskType: taskType,
                                 gradeWeight: gradeWeight // Add grade weight to the assignment
                             });
