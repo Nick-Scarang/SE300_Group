@@ -1,10 +1,5 @@
 class Formula {
     courseDatabase;
-    dueDatePriority = 3;  // Higher priority (lower number = higher priority)
-    completionTimePriority = 2;
-    gradeWeightPriority = 4;
-    progressPriority = 1;
-    doneDatePriority = 0;
 
     constructor(courseDatabase) {
         this.courseDatabase = courseDatabase;
