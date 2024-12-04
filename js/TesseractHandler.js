@@ -21,7 +21,7 @@ class TesseractHandler {
     }
 
     static extractAssignments(text) {
-        const assignmentRegex = /(\n[A-Za-z\s]+)\s+(\d+)\s*(\d+)%/g;
+        const assignmentRegex = /([A-Za-z\s]+\d+)\s+(\d+)%/g;
         const assignments = [];
         let match;
 
