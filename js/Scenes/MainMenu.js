@@ -7,24 +7,15 @@ class MainMenu {
     selectedCourses = [];
     tasksDisplayed = [];
 
-    constructor(canvasInterface, accessToken, userInterface) {
+    constructor(accessToken, userInterface, courseDatabase, userPrefDatabase) {
         console.log('MainMenu instantiated');
-        this.canvasInterface = canvasInterface;
+
         this.accessToken = accessToken;
         this.userInterface = userInterface;
-        // Check and initialize courseDatabase if necessary
-        this.courseDatabase = this.userInterface.getCourseDatabase();
-        if (this.courseDatabase == null) {
-            this.courseDatabase = new CourseDatabase();
-            this.userInterface.setCourseDatabase(this.courseDatabase);
-        }
-        // Check and initialize userPrefDatabase if necessary
-        this.userPrefDatabase = this.userInterface.getUserPrefDatabase();
-        if (this.userPrefDatabase == null) {
-            this.userPrefDatabase = new UserPrefDatabase();
-            console.log('Instantiated UserPrefDatabase from MainMenu')
-            this.userInterface.setUserPrefDatabase(this.userPrefDatabase);
-        }
+        this.courseDatabase = courseDatabase;
+        this.userPrefDatabase = userPrefDatabase;
+        this.formula = new Formula(CourseDatabase);
+
         this.saveData();
         this.render();
     }
@@ -51,25 +42,6 @@ class MainMenu {
                     </table>
                 </div>
 
-                <!-- Collapsible Menu 1 -->
-                <details id="menu1">
-                    <summary>Menu 1</summary>
-                    <div>
-                        <label for="menu1AccessToken">Access Token:</label>
-                        <input type="text" id="menu1AccessToken" value="${this.accessToken}" />
-                        <button id="menu1SaveButton">Save</button>
-                    </div>
-                </details>
-
-                <!-- Collapsible Menu 2 -->
-                <details id="menu2">
-                    <summary>Menu 2</summary>
-                    <div>
-                        <label for="menu2AccessToken">Access Token:</label>
-                        <input type="text" id="menu2AccessToken" value="${this.accessToken}" />
-                        <button id="menu2SaveButton">Save</button>
-                    </div>
-                </details>
 
                 <!-- Collapsible Menu 3 -->
                 <details id="menu3">
@@ -404,9 +376,10 @@ class MainMenu {
     saveData() {
         chrome.storage.local.set({
             accessToken: this.accessToken,
-            courseDatabase: this.courseDatabase,
+            courseDatabase: this.courseDatabase ? this.courseDatabase.getSerializedData() : null,
             userPrefDatabase: this.userPrefDatabase
         }, () => {
+            console.log("Data saved to storage.");
         });
     }
 
@@ -428,14 +401,6 @@ class MainMenu {
         }
 
         this.tasksDisplayed = tasksToDisplay.slice(0, numTasks);
-        // Filter tasks by selected courses
-        //const filteredTasks = tasks.filter(task => {
-            //return this.selectedCourses.some(course => course.name === task.getCourseName());
-        //});
-        
-        //const tasksToDisplay = this.courseDatabase.getTasks().slice(0, numTasks);  // Fetch tasks to display
-
-        //const tasksToDisplay = filteredTasks.slice(0, numTasks);
 
         const tableHeaders = document.getElementById('tableHeaders');
         const tableBody = document.getElementById('taskTableBody');

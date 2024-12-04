@@ -83,6 +83,7 @@ class CanvasInterface {
     }
 
     // Helper function to fetch all assignments for a single course
+// Helper function to fetch all assignments for a single course
     async fetchAllAssignmentsForCourse(course, assignmentGroups) {
         const assignments = [];
         let page = 1; // Start with page 1
@@ -113,10 +114,23 @@ class CanvasInterface {
                         data.forEach((assignment) => {
                             const taskType = this.getTaskTypeForAssignment(assignment.assignment_group_id, assignmentGroups);
                             const gradeWeight = this.getGradeWeightForAssignment(assignment.assignment_group_id, assignmentGroups);
+
+                            // Format the due date with both date and time using Intl.DateTimeFormat
+                            const dateTimeFormat = new Intl.DateTimeFormat('en-US', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: false // Use 24-hour time format
+                            });
+                            const formattedDueDate = dateTimeFormat.format(new Date(assignment.due_at));
+
                             assignments.push({
                                 name: assignment.name,
                                 course: course.name,
-                                due_date: assignment.due_at,
+                                due_date: formattedDueDate, // Store the formatted date and time
                                 taskType: taskType,
                                 gradeWeight: gradeWeight // Add grade weight to the assignment
                             });

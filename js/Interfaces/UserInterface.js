@@ -4,8 +4,6 @@ class UserInterface {
     courseDatabase;
     userPrefDatabase;
     courseList;
-    selectedCourses = [];
-
     constructor(canvasInterface) {
         this.canvasInterface = canvasInterface;
         this.loadSavedData();
@@ -15,15 +13,13 @@ class UserInterface {
     loadSavedData() {
         chrome.storage.local.get(['accessToken', 'courseDatabase', 'userPrefDatabase'], (result) => {
             if (result.courseDatabase) {
-                this.courseDatabase = Object.assign(new CourseDatabase(), result.courseDatabase);
-            } else {
+                console.log('Found Course Database: ');
+                console.table(result.courseDatabase);
                 this.courseDatabase = new CourseDatabase();
-            }
-
-            if (result.taskDatabase) {
-                this.taskDatabase = Object.assign(new TaskDatabase(), result.taskDatabase);
+                this.courseDatabase.loadSerializedData(result.courseDatabase);
             } else {
-                this.taskDatabase = new TaskDatabase();
+                console.log('Did not find Course Database, initializing a new one.');
+                this.courseDatabase = new CourseDatabase();  // Default to a new course database if none found
             }
 
             if (result.userPrefDatabase) {
@@ -55,7 +51,7 @@ class UserInterface {
     // Show the main menu screen
     showMainMenu() {
         this.clearExistingUI();
-        new MainMenu(this.canvasInterface, this.accessToken, this);
+        new MainMenu(this.accessToken, this, this.courseDatabase, this.userPrefDatabase);
     }
 
     // Clear existing UI elements
@@ -76,7 +72,7 @@ class UserInterface {
         console.log('Token is valid and courses are fetched:', courseList);
         this.courseList = courseList;
 
-        chrome.storage.local.set({ accessToken: this.accessToken }, () => {
+        chrome.storage.local.set({accessToken: this.accessToken}, () => {
             console.log("Token saved successfully:", this.accessToken);
         });
 
@@ -113,12 +109,6 @@ class UserInterface {
         this.saveCourseDatabase();
     }
 
-    // Set the task database and save it
-    setTaskDatabase(taskDatabase) {
-        this.taskDatabase = taskDatabase;
-        this.saveTaskDatabase();
-    }
-
     // Set the user preferences database and save it
     setUserPrefDatabase(userPrefDatabase) {
         this.userPrefDatabase = userPrefDatabase;
@@ -150,25 +140,20 @@ class UserInterface {
         assignmentsList.forEach(assignment => {
             console.log('Looking for course:', assignment.course);
 
-            // If the course is different, handle it
-            if (assignment.course !== currentCourseName) {
-                console.log('Moving to another course...');
-                currentCourseName = assignment.course;
+            // Find the course by name from the course database
+            currentCourse = this.courseDatabase.findCourseByName(assignment.course);
+            console.log(this.courseDatabase.getAllCourses());
 
-                // Find the course by name from the course database
-                currentCourse = this.courseDatabase.findCourseByName(assignment.course);
-
-                // If the course is not found, create a new one
-                if (currentCourse) {
-                    console.log(`Course found: ${currentCourse.name}`);
-                    console.log('Course visibility: ', currentCourse.getVisibility());
-                } else {
-                    console.log(`Course not found. Creating new course: ${assignment.course}`);
-                    currentCourse = new Course(assignment.course);
-                    this.courseDatabase.addCourse(currentCourse);
-                }
+            // If the course is not found, create a new one
+            if (currentCourse) {
+                console.log(`Course found: ${currentCourse.getName()}`);
+                console.log('Course visibility: ', currentCourse.getVisibility());
+            } else {
+                console.log(`Course not found. Creating new course: ${assignment.course}`);
+                currentCourse = new Course(assignment.course);
+                this.courseDatabase.addCourse(currentCourse);
             }
-            if (!this.courseDatabase.doesThisCourseExist(assignment.course)){
+            if (!this.courseDatabase.doesThisCourseExist(assignment.course)) {
                 currentCourse = this.courseDatabase.addCourseByName(assignment.course);
             }
 
@@ -180,8 +165,6 @@ class UserInterface {
                 taskType: assignment.taskType,
                 gradeWeight: assignment.gradeWeight
             });
-
-            console.log('Assignment:', assignment);
         });
 
         // Save the updated course database
@@ -191,14 +174,14 @@ class UserInterface {
 
     // Save the updated course database to Chrome storage
     saveCourseDatabase() {
-        chrome.storage.local.set({ courseDatabase: this.courseDatabase }, () => {
+        chrome.storage.local.set({courseDatabase: this.courseDatabase}, () => {
             console.log("Course database saved successfully");
         });
     }
 
     // Save the updated user preferences database to Chrome storage
     saveUserPrefDatabase() {
-        chrome.storage.local.set({ userPrefDatabase: this.userPrefDatabase }, () => {
+        chrome.storage.local.set({userPrefDatabase: this.userPrefDatabase}, () => {
             console.log("User preferences database saved successfully");
         });
     }
