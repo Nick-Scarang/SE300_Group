@@ -4,27 +4,16 @@ class MainMenu {
     courseDatabase;
     userPrefDatabase;
     formula;
-    selectedCourses = [];
-    tasksDisplayed = [];
 
-    constructor(canvasInterface, accessToken, userInterface) {
+    constructor(accessToken, userInterface, courseDatabase, userPrefDatabase) {
         console.log('MainMenu instantiated');
-        this.canvasInterface = canvasInterface;
+
         this.accessToken = accessToken;
         this.userInterface = userInterface;
-        // Check and initialize courseDatabase if necessary
-        this.courseDatabase = this.userInterface.getCourseDatabase();
-        if (this.courseDatabase == null) {
-            this.courseDatabase = new CourseDatabase();
-            this.userInterface.setCourseDatabase(this.courseDatabase);
-        }
-        // Check and initialize userPrefDatabase if necessary
-        this.userPrefDatabase = this.userInterface.getUserPrefDatabase();
-        if (this.userPrefDatabase == null) {
-            this.userPrefDatabase = new UserPrefDatabase();
-            console.log('Instantiated UserPrefDatabase from MainMenu')
-            this.userInterface.setUserPrefDatabase(this.userPrefDatabase);
-        }
+        this.courseDatabase = courseDatabase;
+        this.userPrefDatabase = userPrefDatabase;
+        this.formula = new Formula(courseDatabase);
+
         this.saveData();
         this.render();
     }
@@ -51,25 +40,6 @@ class MainMenu {
                     </table>
                 </div>
 
-                <!-- Collapsible Menu 1 -->
-                <details id="menu1">
-                    <summary>Menu 1</summary>
-                    <div>
-                        <label for="menu1AccessToken">Access Token:</label>
-                        <input type="text" id="menu1AccessToken" value="${this.accessToken}" />
-                        <button id="menu1SaveButton">Save</button>
-                    </div>
-                </details>
-
-                <!-- Collapsible Menu 2 -->
-                <details id="menu2">
-                    <summary>Menu 2</summary>
-                    <div>
-                        <label for="menu2AccessToken">Access Token:</label>
-                        <input type="text" id="menu2AccessToken" value="${this.accessToken}" />
-                        <button id="menu2SaveButton">Save</button>
-                    </div>
-                </details>
 
                 <!-- Collapsible Menu 3 -->
                 <details id="menu3">
@@ -172,16 +142,6 @@ class MainMenu {
                         </div>
                     </details>
 
-
-                    <!-- Late Work Preference in User Setup -->
-                    <details id="menu4LateWork">
-                        <summary>Late Work Preferences:</summary>
-                        <div>
-                            <button id="saveCourses">Save Courses</button>
-                        </div>
-                    </details>
-
-
                     <!-- Set Done Date in User Setup -->
                     <details id="doneDate">
                         <summary>Set Done Date:</summary>
@@ -209,11 +169,6 @@ class MainMenu {
 
         this.displayCourses();
 
-        document.getElementById('saveSelectedCourses').addEventListener('click', () => {
-            this.saveSelectedCourses();
-        });
-
-
         this.populateUserPreferences();
         this.addEventListeners();
         this.updateTaskList();
@@ -222,68 +177,62 @@ class MainMenu {
 
     displayCourses() {
         const courseContainer = document.getElementById('courseContainer');
-        const courses = this.canvasInterface.courses;
-
+        let courses = this.courseDatabase.getAllCourses();
         if (!courses || courses.length === 0) {
             courseContainer.innerHTML = '<p>No courses found. Please refresh or check your API settings.</p>';
             return;
         }
-
         courseContainer.innerHTML = '';
-
         courses.forEach((course) => {
             const button = document.createElement('button');
-            button.textContent = course.name || `Course ${course.id}`;
-            button.dataset.courseId = course.id;
+            button.textContent = course.getName();
             button.classList.add('course-button');
-
+            button.classList.toggle('selected', course.getVisibility());
+            console.log('Set the course buttons toggle to: ', course.getVisibility());
             button.addEventListener('click', () => {
                 button.classList.toggle('selected');
+                course.toggleVisibility();
+                console.log('Updated Course: ', course.getName());
             });
-
             courseContainer.appendChild(button);
         });
     }
 
     displayAssignmentNames(){
         const assignmentsContainer = document.getElementById('assignmentsContainer');
-        
-
-        
-        if (this.tasksDisplayed.length === 0) {
+        const tasks = this.formula.getTaskList(this.userPrefDatabase.getNumTasks());
+        if (tasks.length === 0) {
             assignmentsContainer.innerHTML = '<p>No tasks displayed. Please update your task list.</p>';
             return;
         }
-
         assignmentsContainer.innerHTML = '';
-
         const saveButton = document.createElement('button');
         saveButton.textContent = 'Save Changes';
         saveButton.classList.add('save-button');
-
         saveButton.addEventListener('click', () => { 
             const textboxes = document.querySelectorAll('.done-date-textbox'); // Select all textboxes by a common class
             textboxes.forEach((textbox, index) => {
                 const newDoneDate = textbox.value.trim();
                 if (newDoneDate) {
-                    const task = this.tasksDisplayed[index]; // Match the task based on its index in tasksDisplayed
+                    const task = tasks[index]; // Match the task based on its index in tasksDisplayed
                     task.setDoneDate(newDoneDate); // Save the new done date to the task object
                     console.log(`Task updated with done date: ${newDoneDate}`);
                 }
             });
             this.updateTaskList(); // Re-render the task list with updated data
+            this.saveData();
         });
 
         assignmentsContainer.appendChild(saveButton);
 
-        this.tasksDisplayed.forEach(task => {
+        tasks.forEach(task => {
             //new
             const taskContainer = document.createElement('div');
             taskContainer.classList.add('task-container');
             //new
 
             const label = document.createElement('label');
-            label.textContent = task.getName() || `Assignment ${task.getId()}`; // Customize how you want to display task info
+            label.textContent = task.getName();
             label.classList.add('assignment-label');
 
             const textbox = document.createElement('input');
@@ -298,39 +247,24 @@ class MainMenu {
 
             textbox.addEventListener('change', (event) => {
                 const newDoneDate = event.target.value;
-                task.setDoneDate(newDoneDate); // Save the date in the task object
-                //console.log(`Saved done date for task ${task.getId()}: ${newDoneDate}`); // Debugging log
+                task.setDoneDate(newDoneDate);
             });
 
             taskContainer.appendChild(label);
             taskContainer.appendChild(textbox);
 
-            // Append the label to the assignments container
-            //assignmentsContainer.appendChild(label);
             assignmentsContainer.appendChild(taskContainer);
         });
 
 
     }
 
-    saveSelectedCourses() {
-        const selectedButtons = document.querySelectorAll('.course-button.selected');
-        this.selectedCourses = Array.from(selectedButtons).map(button => {
-            const courseId = button.dataset.courseId;
-            return this.canvasInterface.courses.find(course => course.id == courseId);
-        });
-
-        //this.canvasInterface.courses = selectedCourses;
-
-        const selectedCoursesOutput = document.getElementById('selectedCoursesOutput');
-        selectedCoursesOutput.innerHTML = '<h3>Selected Courses:</h3>' +
-            this.selectedCourses.map(course => `<p>${course.name}</p>`).join('');
-
-            this.updateTaskList();
-            this.displayAssignmentNames();
-    }
 
     addEventListeners() {
+        document.getElementById('saveSelectedCourses').addEventListener('click', () => {
+            this.updateTaskList();
+            this.saveData();
+        });
         // Add event listener for the edit button
         document.getElementById('editButton').addEventListener('click', () => {
             // On edit button click, go to user setup without causing a loop
@@ -426,39 +360,16 @@ class MainMenu {
     saveData() {
         chrome.storage.local.set({
             accessToken: this.accessToken,
-            courseDatabase: this.courseDatabase,
+            courseDatabase: this.courseDatabase ? this.courseDatabase.getSerializedData() : null,
             userPrefDatabase: this.userPrefDatabase
         }, () => {
+            console.log("Data saved to storage.");
         });
     }
 
     updateTaskList() {
         const numTasks = this.userPrefDatabase.getNumTasks();
-        
-        const tasks = this.courseDatabase.getTasks(); // Fetch all tasks
-
-        let tasksToDisplay;
-
-        // If no courses are selected, show all tasks
-        if (this.selectedCourses.length === 0) {
-            tasksToDisplay = tasks;
-        } else {
-            // Filter tasks by selected courses
-            tasksToDisplay = tasks.filter(task => {
-                return this.selectedCourses.some(course => course.name === task.getCourseName());
-            });
-        }
-
-        this.tasksDisplayed = tasksToDisplay.slice(0, numTasks);
-        // Filter tasks by selected courses
-        //const filteredTasks = tasks.filter(task => {
-            //return this.selectedCourses.some(course => course.name === task.getCourseName());
-        //});
-        
-        //const tasksToDisplay = this.courseDatabase.getTasks().slice(0, numTasks);  // Fetch tasks to display
-
-        //const tasksToDisplay = filteredTasks.slice(0, numTasks);
-
+        let tasksToDisplay = this.formula.getTaskList(numTasks);
         const tableHeaders = document.getElementById('tableHeaders');
         const tableBody = document.getElementById('taskTableBody');
         const userPrefs = this.userPrefDatabase;
