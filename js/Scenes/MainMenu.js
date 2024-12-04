@@ -199,6 +199,7 @@ class MainMenu {
     }
 
     displayAssignmentNames(){
+        console.log("Re-rendering done-dates");
         const assignmentsContainer = document.getElementById('assignmentsContainer');
         const tasks = this.formula.getTaskList(this.userPrefDatabase.getNumTasks());
         if (tasks.length === 0) {
@@ -209,7 +210,7 @@ class MainMenu {
         const saveButton = document.createElement('button');
         saveButton.textContent = 'Save Changes';
         saveButton.classList.add('save-button');
-        saveButton.addEventListener('click', () => { 
+        saveButton.addEventListener('click', () => {
             const textboxes = document.querySelectorAll('.done-date-textbox'); // Select all textboxes by a common class
             textboxes.forEach((textbox, index) => {
                 const newDoneDate = textbox.value.trim();
@@ -263,6 +264,7 @@ class MainMenu {
     addEventListeners() {
         document.getElementById('saveSelectedCourses').addEventListener('click', () => {
             this.updateTaskList();
+            this.displayAssignmentNames();
             this.saveData();
         });
         // Add event listener for the edit button
@@ -354,7 +356,6 @@ class MainMenu {
             console.table(this.userPrefDatabase);
         });
         this.updateTaskList();
-        this.displayAssignmentNames();
     }
 
     saveData() {
